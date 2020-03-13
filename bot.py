@@ -6,7 +6,7 @@ import logging
 
 
 def get_prefix(client, message):
-    prefixes = ["ss!"]
+    prefixes = [";"]
     return commands.when_mentioned_or(*prefixes)(client, message)
 
 
