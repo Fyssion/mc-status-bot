@@ -68,6 +68,8 @@ class Updates(commands.Cog):
     @commands.command(description="Enable server updates")
     @commands.has_any_role("Mod", "mod", "admin", "Admin")
     async def enable(self, ctx, channel: discord.TextChannel = None):
+        def check(ms):
+            return ms.author.id == ctx.guild.me.id
         if not channel:
             await ctx.send("Auto setup isn't developed yet. Please specify a channel.")
         permissions = channel.permissions_for(ctx.guild.me)
@@ -77,13 +79,15 @@ class Updates(commands.Cog):
         self.bot.config["updates-channel"] = channel.id
         with open("config.yml", "w") as config:
                 yaml.dump(self.bot.config, config)
-        await self.channel.purge()
+        await self.channel.purge(check=check)
         status_embed = OnlineEmbed(self.channel)
         await status_embed.send()
 
     @commands.command(description="Update the current status")
     @commands.has_any_role("Mod", "mod", "admin", "Admin")
     async def update(self, ctx, status, *, message=None):
+        def check(ms):
+            return ms.author.id == ctx.guild.me.id
         if not self.channel:
             return await ctx.send("You must enable the updates first.")
         permissions = self.channel.permissions_for(ctx.guild.me)
@@ -110,7 +114,7 @@ class Updates(commands.Cog):
         else:
             return await ctx.send("That is an invalid status.")
 
-        await self.channel.purge()
+        await self.channel.purge(check=check)
         await status_embed.send()
 
         await ctx.send("Updated status!")
