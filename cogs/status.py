@@ -27,7 +27,7 @@ class Status(commands.Cog):
     @commands.command(description="Get player list for the current server",
                       aliases=["list", "who", "online"])
     async def players(self, ctx):
-        query_server = MinecraftServer(self.server.host, 25565)
+        query_server = MinecraftServer(self.server.host, 25566)
         partial = functools.partial(query_server.query)
         try:
             query = await self.bot.loop.run_in_executor(None, partial)
