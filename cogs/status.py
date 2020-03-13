@@ -25,16 +25,18 @@ class Status(commands.Cog):
     @commands.command(description="Get player list for the current server",
                       aliases=["list", "who", "online"])
     async def players(self, ctx):
-        return await ctx.send("That command is still in development.")
         try:
-            status = self.server.status()
-        except:
-            return await ctx.send("Server is offline.")
-        players = "\n".join(status.players.names)
+            query = self.server.query()
+        except Exception as e:
+            return await ctx.send("Server is offline or does not have query set up.\n"
+                                  "Activate query with `enable-query` in server.properties.\n"
+                                  f"```py\n{e}\n```")
+        players = "\n".join(query.players.names)
         em = discord.Embed(title=f"Current Players Online:", description=players,
                            color=discord.Color.green(), timestamp=d.utcnow())
         port = self.server.port if self.server.port != 25565 else ""
         em.set_footer(text=f"Server IP: {self.server.host}:{port}")
+        await ctx.send(embed=em)
 
     @commands.command(name="set", hidden=True)
     @commands.is_owner()
@@ -46,6 +48,7 @@ class Status(commands.Cog):
         self.bot.config["server-url"] = domain
         with open("config.yml", "w") as config:
             yaml.dump(self.bot.config, config)
+        await ctx.send(f"Set status to {domain}")
 
     @tasks.loop(seconds=15)
     async def update_status(self):
@@ -56,7 +59,7 @@ class Status(commands.Cog):
             game = discord.Game("Server is Offline")
             if self.current_status == [discord.Status.dnd, game]:
                 return
-            await self.bot.change_presence(status=discord.Status.dnd, acivity=game)
+            await self.bot.change_presence(status=discord.Status.dnd, activity=game)
             self.current_status = [discord.Status.dnd, game]
             return
 
@@ -64,7 +67,7 @@ class Status(commands.Cog):
             bot_status = discord.Status.idle
         else:
             bot_status = discord.Status.online
-        game = discord.Game(f"{status.players.online}/{status.players.max} players online")
+        game = discord.Game(f"{status.players.online}/{status.players.max} online")
         if self.current_status == [bot_status, game]:
             return
         await self.bot.change_presence(status=bot_status, activity=game)
