@@ -3,8 +3,10 @@ from discord.ext import commands, tasks
 
 from mcstatus import MinecraftServer
 from datetime import datetime as d
+import functools
 import logging
 import yaml
+
 
 
 class Status(commands.Cog):
@@ -25,8 +27,9 @@ class Status(commands.Cog):
     @commands.command(description="Get player list for the current server",
                       aliases=["list", "who", "online"])
     async def players(self, ctx):
+        partial = functools.partial(self.server.query())
         try:
-            query = self.server.query()
+            query = await self.bot.loop.run_in_executor(None, partial)
         except Exception as e:
             return await ctx.send("Server is offline or does not have query set up.\n"
                                   "Activate query with `enable-query` in server.properties.\n"
@@ -52,8 +55,9 @@ class Status(commands.Cog):
 
     @tasks.loop(seconds=15)
     async def update_status(self):
+        partial = functools.partial(self.server.status())
         try:
-            status = self.server.status()
+            status = await self.bot.loop.run_in_executor(None, partial)
 
         except:
             game = discord.Game("Server is Offline")
