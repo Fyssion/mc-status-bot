@@ -56,7 +56,7 @@ class Status(commands.Cog):
             game = discord.Game("Server is Offline")
             if self.current_status == [discord.Status.dnd, game]:
                 return
-            await bot.change_presence(status=discord.Status.dnd, acivity=game)
+            await self.bot.change_presence(status=discord.Status.dnd, acivity=game)
             self.current_status = [discord.Status.dnd, game]
             return
 
