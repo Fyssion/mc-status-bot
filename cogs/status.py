@@ -42,12 +42,10 @@ class Status(commands.Cog):
         em.set_footer(text=f"Server IP: {self.server.host}:{port}")
         await ctx.send(embed=em)
 
-    @commands.command(description="Get the ip of the current server")
+    @commands.group(description="Get the ip of the current server",
+                    invoke_without_command=True)
     async def ip(self, ctx):
-        server_ip = str(self.server.host)
-        if self.server.port != 25565:
-            server_ip += f":{self.server.port}"
-        await ctx.send(f"IP: **`{server_ip}`**")
+        await ctx.send(f"IP: **`{self.bot.config['server-url']}`**")
 
     @commands.command(name="set", hidden=True)
     @commands.is_owner()
