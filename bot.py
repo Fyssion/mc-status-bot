@@ -26,7 +26,10 @@ class ServerStatus(commands.Bot):
 
         self.load_extension("cogs.status")
         self.load_extension("cogs.updates")
-        self.load_extension("jishaku")
+        try:
+            self.load_extension("jishaku")
+        except Exception as e:
+            pass
 
     def load_config(self, filename):
         with open(filename, "r") as config:
