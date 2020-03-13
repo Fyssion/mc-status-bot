@@ -27,7 +27,7 @@ class Status(commands.Cog):
     @commands.command(description="Get player list for the current server",
                       aliases=["list", "who", "online"])
     async def players(self, ctx):
-        partial = functools.partial(self.server.query())
+        partial = functools.partial(self.server.query)
         try:
             query = await self.bot.loop.run_in_executor(None, partial)
         except Exception as e:
@@ -55,7 +55,7 @@ class Status(commands.Cog):
 
     @tasks.loop(seconds=15)
     async def update_status(self):
-        partial = functools.partial(self.server.status())
+        partial = functools.partial(self.server.status)
         try:
             status = await self.bot.loop.run_in_executor(None, partial)
 
