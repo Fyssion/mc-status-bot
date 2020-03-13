@@ -26,7 +26,6 @@ class StatusEmbed:
         await self.channel.send(embed=embed)
 
 
-
 class OnlineEmbed(StatusEmbed):
 
     def __init__(self, channel: discord.TextChannel, status_message="All is well!"):
@@ -71,6 +70,9 @@ class Updates(commands.Cog):
     async def enable(self, ctx, channel: discord.TextChannel = None):
         if not channel:
             await ctx.send("Auto setup isn't developed yet. Please specify a channel.")
+        permissions = channel.permissions_for(ctx.guild.me)
+        if not permissions.manage_messages or not permissions.send_messages:
+            return await ctx.send("Bot must have send and manage messages in the updates channel.")
         self.channel = channel
         self.bot.config["updates-channel"] = channel.id
         with open("config.yml", "w") as config:
@@ -81,9 +83,12 @@ class Updates(commands.Cog):
 
     @commands.command(description="Update the current status")
     @commands.has_any_role("Mod", "mod", "admin", "Admin")
-    async def update(self, ctx, status, message=None):
+    async def update(self, ctx, status, *, message=None):
         if not self.channel:
             return await ctx.send("You must enable the updates first.")
+        permissions = self.channel.permissions_for(ctx.guild.me)
+        if not permissions.manage_messages or not permissions.send_messages:
+            return await ctx.send("Bot must have send and manage messages in the updates channel.")
         if status.lower() == "online":
             if message:
                 status_embed = OnlineEmbed(self.channel, message)
@@ -107,6 +112,8 @@ class Updates(commands.Cog):
 
         await self.channel.purge()
         await status_embed.send()
+
+        await ctx.send("Updated status!")
 
 
 def setup(bot):
