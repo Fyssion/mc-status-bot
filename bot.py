@@ -25,10 +25,11 @@ class ServerStatus(commands.Bot):
         self.config = self.load_config("config.yml")
 
         self.load_extension("cogs.status")
+        self.load_extension("cogs.updates")
         self.load_extension("jishaku")
 
-    def load_config(self, config):
-        with open(config, "r") as config:
+    def load_config(self, filename):
+        with open(filename, "r") as config:
             try:
                 return yaml.safe_load(config)
             except yaml.YAMLError as exc:
