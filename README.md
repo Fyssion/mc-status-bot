@@ -23,14 +23,6 @@ Discord Bot that checks status for a specified server and displays it in the Dis
    - It's recommended you run bot.py in cmd.
    - On Windows, you navigate to the folder where you have the bot, open CMD (shift right click, click `Open Powershell window here`)
    - Type `py bot.py` to start the bot.
-   
-## Commands
-
-- `;set` - Set the server to get status from
-- `;ip` - View the IP of the current server
-- `;players` - Get a list of the players on the server (APPEARS TO BE BROKEN)
-- `;enable` - Enable updates (see Setup Updates section below)
-- `;update` - Update the updates message with a new one (see Setup Updates section below)
 
 ## Setup Updates (after installation)
 
@@ -45,6 +37,14 @@ After you have confirmed the bot is installed correctly, follow these steps to s
 4. You can use the updates feature with the `;update STATUS_HERE MESSAGE_HERE` command.
    - `STATUS_HERE` can be online, offline, maintenance, buggy, or difficulties.
    - `MESSAGE_HERE` can be left blank. This will set the message to the default.
+   
+## Commands
+
+- `;set` - Set the server to get status from
+- `;ip` - View the IP of the current server
+- `;players` - Get a list of the players on the server (APPEARS TO BE BROKEN)
+- `;enable` - Enable updates (see Setup Updates section above)
+- `;update` - Update the updates message with a new one (see Setup Updates section above)
 
 ## Requirements
 
