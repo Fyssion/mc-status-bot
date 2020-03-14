@@ -1,0 +1,12 @@
+{
+    "name": "Minecraft Server Status Bot",
+    "description": "Discord Bot that checks status for a specified server and displays it in the Discord sidebar.",
+    "env": {
+      "bot-token": {
+        "description": "Your bot application's token"
+      },
+      "server-url": {
+        "description": "The server ip to get status from. Can be changed with the set command."
+      }
+    }
+}
