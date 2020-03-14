@@ -1,3 +1,3 @@
 config.yml
 *.pyc
-*.json
+tags.json
