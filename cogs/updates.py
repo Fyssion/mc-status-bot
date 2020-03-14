@@ -73,8 +73,8 @@ class Updates(commands.Cog):
         if not channel:
             await ctx.send("Auto setup isn't developed yet. Please specify a channel.")
         permissions = channel.permissions_for(ctx.guild.me)
-        if not permissions.manage_messages or not permissions.send_messages:
-            return await ctx.send("Bot must have send and manage messages in the updates channel.")
+        if not permissions.embed_links or not permissions.send_messages:
+            return await ctx.send("Bot must have send messages and embed links in the updates channel.")
         self.channel = channel
         self.bot.config["updates-channel"] = channel.id
         with open("config.yml", "w") as config:
@@ -91,8 +91,8 @@ class Updates(commands.Cog):
         if not self.channel:
             return await ctx.send("You must enable the updates first.")
         permissions = self.channel.permissions_for(ctx.guild.me)
-        if not permissions.manage_messages or not permissions.send_messages:
-            return await ctx.send("Bot must have send and manage messages in the updates channel.")
+        if not permissions.embed_links or not permissions.send_messages:
+            return await ctx.send("Bot must have send messages and embed links in the updates channel.")
         if status.lower() == "online":
             if message:
                 status_embed = OnlineEmbed(self.channel, message)
