@@ -1,6 +1,6 @@
-# minecraft-server-status-bot
+# Minecraft Server Status Bot
 
-Bot that checks status for a specified server and displays it in the Discord sidebar
+Discord Bot that checks status for a specified server and displays it in the Discord sidebar.
 
 ## Installation
 
