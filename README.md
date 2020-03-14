@@ -2,6 +2,8 @@
 
 Discord Bot that checks status for a specified server and displays it in the Discord sidebar.
 
+**If you have any issues, join my [support server](https://www.discord.gg/wfCGTrp).**
+
 ## Installation
 
 1. Clone the repository
@@ -28,6 +30,33 @@ Discord Bot that checks status for a specified server and displays it in the Dis
    - On Windows, you navigate to the folder where you have the bot, open CMD (shift right click, click `Open Powershell window here`)
    - Type `py bot.py` to start the bot.
 
+## Deploy to Heroku
+
+You may have noticed that you have to keep CMD open if you want your bot to stay online.
+With Heroku, you don't have worry about any of this.
+
+Assuming you have installed the bot with the section above, follow these steps:
+
+1. Download and install [Git](https://git-scm.com/downloads)
+2. Download and install the [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli#download-and-install)
+3. Create a Heroku account
+4. Create a git repo in the bot folder
+   - Open CMD in the bot's folder (see step 4 in Installation for more info)
+   - Use the following commands in CMD:
+     - `git init` - This creates the repo
+     - `git add .`
+     - `git commit -m "Initial commit"` - You can put anything you want inside the quotes
+5. Create a Heroku App
+   - Use the command `heroku create` to create a Heroku App
+6. Deploy to Heroku
+   - Use the command `git push heroku master` to upload the files to Heroku
+   - To actually turn on the bot, you have to navigate to the [Heroku Dashboard](https://dashboard.heroku.com/apps/)
+   - Click `Configure Dynos`
+   - Click the pencil icon next to `worker python bot.py`
+   - Toggle the switch
+   - Your will now start and should appear online shortly
+   - You can turn the bot off by toggling off the switch.
+
 ## Setup Updates (after installation)
 
 Make sure you have installed the bot correctly and are running `bot.py`.
@@ -41,7 +70,7 @@ After you have confirmed the bot is installed correctly, follow these steps to s
 4. You can use the updates feature with the `;update STATUS_HERE MESSAGE_HERE` command.
    - `STATUS_HERE` can be online, offline, maintenance, buggy, or difficulties.
    - `MESSAGE_HERE` can be left blank. This will set the message to the default.
-   
+
 ## Commands
 
 - `;set` - Set the server to get status from
@@ -54,5 +83,4 @@ After you have confirmed the bot is installed correctly, follow these steps to s
 
 - discord.py==1.3.2
 - mcstatus
-- pyyaml
 - OPTIONAL: jishaku
