@@ -55,7 +55,7 @@ Assuming you have installed the bot with the section above, follow these steps:
    - Click the pencil icon next to `worker python bot.py`
    - Toggle the switch
    - Your will now start and should appear online shortly
-   - You can turn the bot off by toggling off the switch.
+   - You can turn the bot off by toggling off the switch
 
 ## Setup Updates (after installation)
 
