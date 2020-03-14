@@ -17,7 +17,7 @@ Discord Bot that checks status for a specified server and displays it in the Dis
    - If you're unsure on how to create a bot application, [visit this website](https://discordpy.readthedocs.io/en/latest/discord.html).
 4. Run bot.py
    - It's recommended you run bot.py in cmd.
-   - On Windows, you navegate to the folder where you have the bot, open CMD (shift right click, click `Open Powershell window here`)
+   - On Windows, you navigate to the folder where you have the bot, open CMD (shift right click, click `Open Powershell window here`)
    - Type `py bot.py` to start the bot.
 
 ## Setup Updates (after installation)
