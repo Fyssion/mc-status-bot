@@ -5,7 +5,7 @@ from mcstatus import MinecraftServer
 from datetime import datetime as d
 import functools
 import logging
-import yaml
+import json
 
 
 
@@ -55,8 +55,8 @@ class Status(commands.Cog):
             return await ctx.send("Could not find that server")
         self.server = server
         self.bot.config["server-url"] = domain
-        with open("config.yml", "w") as config:
-            yaml.dump(self.bot.config, config)
+        with open("config.json", "w") as config:
+            json.dump(self.bot.config, config, indent=4, sort_keys=True)
         await ctx.send(f"Set status to {domain}")
 
     @tasks.loop(seconds=15)

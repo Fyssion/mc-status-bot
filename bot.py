@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands, tasks
 
-import yaml
+import json
 import logging
 
 
@@ -22,7 +22,7 @@ class ServerStatus(commands.Bot):
 
         logging.basicConfig(level=logging.INFO)
 
-        self.config = self.load_config("config.yml")
+        self.config = self.load_config("config.json")
 
         self.load_extension("cogs.status")
         self.load_extension("cogs.updates")
@@ -33,13 +33,7 @@ class ServerStatus(commands.Bot):
 
     def load_config(self, filename):
         with open(filename, "r") as config:
-            try:
-                return yaml.safe_load(config)
-            except yaml.YAMLError as exc:
-                logging.critical("Could not load config.yml")
-                print(exc)
-                import sys
-                sys.exit()
+            return json.load(config)
 
     async def on_ready(self):
         logging.info(f"Logged in as {self.user.name} - {self.user.id}")

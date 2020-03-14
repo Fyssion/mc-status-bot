@@ -13,11 +13,15 @@ Discord Bot that checks status for a specified server and displays it in the Dis
    - Use the command above in cmd (or terminal on Linux and Mac).
       You can add all the requirements to the end of the command, seperated by spaces.
    - You could also use the command separately for each requirement
-3. Create a config.yml file (with notepad or your prefered text editor), and paste this in (make sure to fill in the values):
-   ```yml
-   bot-token: BOT-TOKEN-HERE
-   server-url: SERVER-URL-HERE
+3. Create a config.json file (with notepad or your prefered text editor), and paste this in (make sure to fill in the values):
+
+   ```json
+   {
+    "bot-token" : "BOT_TOKEN_HERE",
+    "server-url" : "SERVER_IP_HERE",
+   }
    ```
+
    - If you're unsure on how to create a bot application, [visit this website](https://discordpy.readthedocs.io/en/latest/discord.html).
 4. Run bot.py
    - It's recommended you run bot.py in cmd.

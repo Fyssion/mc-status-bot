@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from datetime import datetime as d
 import logging
-import yaml
+import json
 
 
 class StatusEmbed:
@@ -62,8 +62,8 @@ class Updates(commands.Cog):
                 self.channel = self.bot.get_channel(int(channel))
         else:
             bot.config["updates-channel"] = None
-            with open("config.yml", "w") as config:
-                yaml.dump(bot.config, config)
+            with open("config.json", "w") as config:
+                json.dump(bot.config, config, indent=4, sort_keys=True)
 
     @commands.command(description="Enable server updates")
     @commands.has_any_role("Mod", "mod", "admin", "Admin")
@@ -77,8 +77,8 @@ class Updates(commands.Cog):
             return await ctx.send("Bot must have send messages and embed links in the updates channel.")
         self.channel = channel
         self.bot.config["updates-channel"] = channel.id
-        with open("config.yml", "w") as config:
-                yaml.dump(self.bot.config, config)
+        with open("config.json", "w") as config:
+                json.dump(self.bot.config, config, indent=4, sort_keys=True)
         await self.channel.purge(check=check)
         status_embed = OnlineEmbed(self.channel)
         await status_embed.send()
