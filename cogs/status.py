@@ -13,7 +13,14 @@ class Status(commands.Cog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.server = MinecraftServer.lookup(self.bot.config["server-url"])
+
+        if "server-url" in self.bot.config.keys():
+            self.bot.config["server-ip"] = self.bot.config["server-url"]
+            del self.bot.config["server-url"]
+            with open("config.json", "w") as config:
+                json.dump(self.bot.config, config, indent=4, sort_keys=True)
+
+        self.server = MinecraftServer.lookup(self.bot.config["server-ip"])
         if not self.server:
             logging.critical("Could not find server.")
             import sys
@@ -43,18 +50,18 @@ class Status(commands.Cog):
         await ctx.send(embed=em)
 
     @commands.group(description="Get the ip of the current server",
-                    invoke_without_command=True)
-    async def ip(self, ctx):
-        await ctx.send(f"IP: **`{self.bot.config['server-url']}`**")
+                    invoke_without_command=True, aliases=["ip"])
+    async def server(self, ctx):
+        await ctx.send(f"IP: **`{self.bot.config['server-ip']}`**")
 
-    @commands.command(name="set", hidden=True)
+    @server.command(name="set")
     @commands.is_owner()
     async def _set(self, ctx, domain):
         server = MinecraftServer.lookup(domain)
         if not server:
             return await ctx.send("Could not find that server")
         self.server = server
-        self.bot.config["server-url"] = domain
+        self.bot.config["server-ip"] = domain
         with open("config.json", "w") as config:
             json.dump(self.bot.config, config, indent=4, sort_keys=True)
         await ctx.send(f"Set status to {domain}")

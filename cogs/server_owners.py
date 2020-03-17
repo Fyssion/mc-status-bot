@@ -51,7 +51,8 @@ class DifficultiesEmbed(StatusEmbed):
         super().__init__(channel, status_message)
 
 
-class Updates(commands.Cog):
+class ServerOwners(commands.Cog, name="Server Owners"):
+    """This module is for server owners who would like to update the status of their server manually."""
 
     def __init__(self, bot):
         self.bot = bot
@@ -65,8 +66,14 @@ class Updates(commands.Cog):
             with open("config.json", "w") as config:
                 json.dump(bot.config, config, indent=4, sort_keys=True)
 
-    @commands.command(description="Enable server updates")
-    @commands.has_any_role("Mod", "mod", "admin", "Admin")
+    @commands.group(invoke_without_command=True, aliases=["update"])
+    async def updates(self, ctx):
+        if not self.channel:
+            return await ctx.send("Updates are not enabled.")
+        await ctx.send(f"Current updates channnel: {self.channel}")
+
+    @updates.command(description="Enable server updates")
+    @commands.has_permissions(manage_guild=True)
     async def enable(self, ctx, channel: discord.TextChannel = None):
         def check(ms):
             return ms.author.id == ctx.guild.me.id
@@ -83,9 +90,20 @@ class Updates(commands.Cog):
         status_embed = OnlineEmbed(self.channel)
         await status_embed.send()
 
-    @commands.command(description="Update the current status")
-    @commands.has_any_role("Mod", "mod", "admin", "Admin")
-    async def update(self, ctx, status, *, message=None):
+    @updates.command(description="Disable updates")
+    @commands.has_permissions(manage_guild=True)
+    async def disable(self, ctx):
+        if not self.channel:
+            return await ctx.send("Updates are already disabled.")
+        self.channel = None
+        del self.bot.config["updates-channel"]
+        with open("config.json", "w") as config:
+                json.dump(self.bot.config, config, indent=4, sort_keys=True)
+        await ctx.send("Disabled updates")
+
+    @updates.command(name="set", description="Set the current status")
+    @commands.has_permissions(manage_guild=True)
+    async def _set(self, ctx, status, *, message=None):
         def check(ms):
             return ms.author.id == ctx.guild.me.id
         if not self.channel:
@@ -121,4 +139,4 @@ class Updates(commands.Cog):
 
 
 def setup(bot):
-    bot.add_cog(Updates(bot))
+    bot.add_cog(ServerOwners(bot))

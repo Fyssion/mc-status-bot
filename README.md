@@ -20,7 +20,8 @@ Discord Bot that checks status for a specified server and displays it in the Dis
    ```json
    {
     "bot-token" : "BOT_TOKEN_HERE",
-    "server-url" : "SERVER_IP_HERE",
+    "prefix" : "PREFIX_HERE",
+    "server-up" : "SERVER_IP_HERE",
    }
    ```
 

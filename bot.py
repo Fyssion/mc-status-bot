@@ -6,7 +6,9 @@ import logging
 
 
 def get_prefix(client, message):
-    prefixes = [";"]
+    with open("config.json", "r") as f:
+        config = json.load(f)
+    prefixes = [config["prefix"]]
     return commands.when_mentioned_or(*prefixes)(client, message)
 
 
@@ -17,15 +19,15 @@ class ServerStatus(commands.Bot):
             command_prefix=get_prefix,
             description="Fetches and displays the status of a Minecraft server",
             case_insensitive=True,
-            help_command = None,
         )
 
         logging.basicConfig(level=logging.INFO)
 
         self.config = self.load_config("config.json")
 
+        self.load_extension("cogs.meta")
         self.load_extension("cogs.status")
-        self.load_extension("cogs.updates")
+        self.load_extension("cogs.server_owners")
         try:
             self.load_extension("jishaku")
         except Exception as e:
