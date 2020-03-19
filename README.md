@@ -74,11 +74,14 @@ After you have confirmed the bot is installed correctly, follow these steps to s
 
 ## Commands
 
-- `;set` - Set the server to get status from
-- `;ip` - View the IP of the current server
+- `;help` - View all commands
+- `;server` - View current server's IP
+  - `;server set` - Set the server to get status from
 - `;players` - Get a list of the players on the server (APPEARS TO BE BROKEN)
-- `;enable` - Enable updates (see Setup Updates section above)
-- `;update` - Update the updates message with a new one (see Setup Updates section above)
+- `;updates` - View updates channel
+  - `;updates enable` - Enable updates (see Setup Updates section above)
+  - `;updates disable` - Disable updates
+  - `;updates set` - Update the updates message with a new one (see Setup Updates section above)
 
 ## Requirements
 
