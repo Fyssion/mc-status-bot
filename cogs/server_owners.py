@@ -42,6 +42,17 @@ class MaintenenceEmbed(StatusEmbed):
         super().__init__(channel, status_message)
 
 
+class ClosedEmbed(StatusEmbed):
+
+    color = discord.Color.red()
+    status = "Closed"
+
+    def __init__(self, channel: discord.TextChannel,
+                 status_message="Server is closed."):
+        super().__init__(channel, status_message)
+
+
+
 class DifficultiesEmbed(StatusEmbed):
 
     color = discord.Color.gold()
@@ -128,6 +139,12 @@ class ServerOwners(commands.Cog, name="Server Owners"):
                 status_embed = DifficultiesEmbed(self.channel, message)
             else:
                 status_embed = DifficultiesEmbed(self.channel)
+
+        elif status.lower() == "closed":
+            if message:
+                status_embed = ClosedEmbed(self.channel, message)
+            else:
+                status_embed = ClosedEmbed(self.channel)
 
         else:
             return await ctx.send("That is an invalid status.")
