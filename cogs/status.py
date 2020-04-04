@@ -66,6 +66,11 @@ class Status(commands.Cog):
             json.dump(self.bot.config, config, indent=4, sort_keys=True)
         await ctx.send(f"Set status to {domain}")
 
+    def get_game(self, game):
+        if not game:
+            return None
+        return game.name
+
     @tasks.loop(seconds=15)
     async def update_status(self):
         partial = functools.partial(self.server.status)
@@ -74,7 +79,7 @@ class Status(commands.Cog):
 
         except:
             game = discord.Game("Server is Offline")
-            if self.current_status == [discord.Status.dnd, game]:
+            if self.current_status == [discord.Status.dnd, game] and self.bot_member.activity:
                 return
             await self.bot.change_presence(status=discord.Status.dnd, activity=game)
             self.current_status = [discord.Status.dnd, game]
@@ -85,14 +90,20 @@ class Status(commands.Cog):
         else:
             bot_status = discord.Status.online
         game = discord.Game(f"{status.players.online}/{status.players.max} online")
-        if self.current_status == [bot_status, game]:
+        if self.current_status == [bot_status, game] and self.bot_member.activity:
             return
         await self.bot.change_presence(status=bot_status, activity=game)
         self.current_status = [bot_status, game]
 
+    async def get_bot_member(self):
+        if not self.bot.guilds:
+            return None
+        return self.bot.guilds[0].get_member(self.bot.user.id)
+
     @update_status.before_loop
     async def before_printer(self):
         await self.bot.wait_until_ready()
+        self.bot_member = await self.get_bot_member()
 
 
 def setup(bot):
