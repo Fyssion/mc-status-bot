@@ -66,6 +66,28 @@ class Status(commands.Cog):
             json.dump(self.bot.config, config, indent=4, sort_keys=True)
         await ctx.send(f"Set status to {domain}")
 
+    @commands.Cog.listener("on_connect")
+    async def reload_status(self):
+        if not self.bot.is_ready():
+            return
+        partial = functools.partial(self.server.status)
+        try:
+            status = await self.bot.loop.run_in_executor(None, partial)
+
+        except:
+            game = discord.Game("Server is Offline")
+            await self.bot.change_presence(status=discord.Status.dnd, activity=game)
+            self.current_status = [discord.Status.dnd, game]
+            return
+
+        if status.players.online == status.players.max:
+            bot_status = discord.Status.idle
+        else:
+            bot_status = discord.Status.online
+        game = discord.Game(f"{status.players.online}/{status.players.max} online")
+        await self.bot.change_presence(status=bot_status, activity=game)
+        self.current_status = [bot_status, game]
+
     def get_game(self, game):
         if not game:
             return None
@@ -76,7 +98,6 @@ class Status(commands.Cog):
         partial = functools.partial(self.server.status)
         try:
             status = await self.bot.loop.run_in_executor(None, partial)
-
         except:
             game = discord.Game("Server is Offline")
             if self.current_status == [discord.Status.dnd, game] and self.bot_member.activity:
