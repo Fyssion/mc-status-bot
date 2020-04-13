@@ -75,7 +75,7 @@ class Status(commands.Cog):
             status = await self.bot.loop.run_in_executor(None, partial)
 
         except:
-            game = discord.Game("Server is Offline")
+            game = discord.Game("Server is offline")
             await self.bot.change_presence(status=discord.Status.dnd, activity=game)
             self.current_status = [discord.Status.dnd, game]
             return
@@ -99,7 +99,7 @@ class Status(commands.Cog):
         try:
             status = await self.bot.loop.run_in_executor(None, partial)
         except:
-            game = discord.Game("Server is Offline")
+            game = discord.Game("Server is offline")
             if self.current_status == [discord.Status.dnd, game] and self.bot_member.activity:
                 return
             await self.bot.change_presence(status=discord.Status.dnd, activity=game)
