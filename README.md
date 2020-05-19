@@ -2,7 +2,40 @@
 
 Discord Bot that checks status for a specified server and displays it in the Discord sidebar.
 
+![Online Status Example for mc.hypixel.net](https://absolutely.nothing-to-see-he.re/VpqrFG.png)
+![Idle Status Example](https://absolutely.nothing-to-see-he.re/gDpNVf.png)
+![Offline Status Example](https://absolutely.nothing-to-see-he.re/I9Ini7.png)
+
 **If you have any issues, join my [support server](https://www.discord.gg/wfCGTrp).**
+
+## Features
+
+- "At a glance" status display; no need to boot up Minecraft to see who's online!
+- Real-time Minecraft server status
+- Customizable prefix
+- Easy-to-follow install instructions
+- Special features for Minecraft server owners/managers
+
+## Commands
+
+- `;help` - View all commands
+- `;server` - View current server's IP
+  - `;server set` - Set the server to get status from
+- `;players` - Get a list of the players on the server (APPEARS TO BE BROKEN)
+- `;updates` - View updates channel
+  - `;updates enable` - Enable updates (see Setup Updates section above)
+  - `;updates disable` - Disable updates
+  - `;updates set` - Update the updates message with a new one (see Setup Updates section above)
+
+## Status Key
+
+**Online** - Minecraft server is online and joinable
+
+**Idle** - Minecraft server is online, but full
+
+**DND** - Minecraft server is offline or closed
+
+The activity shows the current player count. Ex: 77/100 online
 
 ## Installation
 
@@ -13,9 +46,9 @@ Discord Bot that checks status for a specified server and displays it in the Dis
    - Python is required to run the bot. [Download Python here](https://www.python.org/downloads/)
    - Once you have python installed, you can use `py -m pip install -U REQUIREMENT_HERE` (replace `py` with `python` on Linux and Mac)
    - Use the command above in cmd (or terminal on Linux and Mac).
-      You can add all the requirements to the end of the command, seperated by spaces.
+      You can add all the requirements to the end of the command, separated by spaces.
    - You could also use the command separately for each requirement
-3. Create a config.json file (with notepad or your prefered text editor), and paste this in (make sure to fill in the values):
+3. Create a config.json file (with notepad or your preferred text editor), and paste this in (make sure to fill in the values):
 
    ```json
    {
@@ -72,19 +105,8 @@ After you have confirmed the bot is installed correctly, follow these steps to s
    - `STATUS_HERE` can be online, offline, maintenance, buggy, or difficulties.
    - `MESSAGE_HERE` can be left blank. This will set the message to the default.
 
-## Commands
-
-- `;help` - View all commands
-- `;server` - View current server's IP
-  - `;server set` - Set the server to get status from
-- `;players` - Get a list of the players on the server (APPEARS TO BE BROKEN)
-- `;updates` - View updates channel
-  - `;updates enable` - Enable updates (see Setup Updates section above)
-  - `;updates disable` - Disable updates
-  - `;updates set` - Update the updates message with a new one (see Setup Updates section above)
-
 ## Requirements
 
-- discord.py==1.3.2
+- discord.py>=1.2.5
 - mcstatus
 - OPTIONAL: jishaku
