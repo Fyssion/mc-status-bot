@@ -2,129 +2,165 @@ import discord
 from discord.ext import commands, tasks
 
 from mcstatus import MinecraftServer
-from datetime import datetime as d
+import asyncio
 import functools
 import logging
-import json
+import yaml
+import traceback
 
+
+log = logging.getLogger("bot")
+
+
+class ServerNotFound(commands.CommandError):
+    def __init__(self, ip):
+        self.ip = ip
+        super().__init__(f"Could not find server with an IP of {ip}.")
 
 
 class Status(commands.Cog):
-
     def __init__(self, bot):
         self.bot = bot
 
-        if "server-url" in self.bot.config.keys():
-            self.bot.config["server-ip"] = self.bot.config["server-url"]
-            del self.bot.config["server-url"]
-            with open("config.json", "w") as config:
-                json.dump(self.bot.config, config, indent=4, sort_keys=True)
+        self.ip = ip = self.bot.config["server-ip"]
+        log.info(f"Looking up Minecraft server IP: {ip}")
+        self.server = MinecraftServer.lookup(ip)
 
-        self.server = MinecraftServer.lookup(self.bot.config["server-ip"])
         if not self.server:
-            logging.critical("Could not find server.")
-            import sys
-            sys.exit()
-        self.current_status = [None, None]
-        self.update_status.start()
+            log.critical(f"Could not find server with an IP of {ip}.")
+            raise ServerNotFound(ip)
+
+        log.info(f"Found server with an IP of {ip}")
+
+        self.status_updater_task.start()
 
     def cog_unload(self):
-        self.update_status.cancel()
+        self.status_updater_task.cancel()
 
-    @commands.command(description="Get player list for the current server",
-                      aliases=["list", "who", "online"])
+    @commands.command(
+        aliases=["list", "who", "online"],
+    )
     async def players(self, ctx):
-        query_server = MinecraftServer(self.server.host, 25565)
-        partial = functools.partial(query_server.query)
+        """Get player list for the current server"""
+        partial = functools.partial(self.server.query)
         try:
             query = await self.bot.loop.run_in_executor(None, partial)
-        except Exception as e:
-            return await ctx.send("Server is offline or does not have query set up.\n"
-                                  "Activate query with `enable-query` in server.properties.\n"
-                                  f"```py\n{e}\n```")
+
+        except Exception as exc:
+            traceback.print_exception(type(exc), exc, exc.__traceback__)
+            return await ctx.send(
+                "An error occured while attempting to query the server.\n"
+                "Server may be offline or does not have query set up.\n"
+                "Activate query with `enable-query` in `server.properties`.\n"
+                f"Error: ```py\n{exc}\n```"
+            )
+
         players = "\n".join(query.players.names)
-        em = discord.Embed(title=f"Current Players Online:", description=players,
-                           color=discord.Color.green(), timestamp=d.utcnow())
-        port = self.server.port if self.server.port != 25565 else ""
-        em.set_footer(text=f"Server IP: {self.server.host}:{port}")
+        em = discord.Embed(
+            title=f"Current Players Online:",
+            description=players,
+            color=discord.Color.green(),
+        )
+
+        em.set_footer(text=f"Server IP: `{self.ip}`")
         await ctx.send(embed=em)
 
-    @commands.group(description="Get the ip of the current server",
-                    invoke_without_command=True, aliases=["ip"])
+    @commands.group(
+        invoke_without_command=True,
+        aliases=["ip"],
+    )
     async def server(self, ctx):
-        await ctx.send(f"IP: **`{self.bot.config['server-ip']}`**")
+        """Get the ip of the current server"""
+        await ctx.send(f"IP: **`{self.ip}`**")
 
     @server.command(name="set")
     @commands.is_owner()
-    async def _set(self, ctx, domain):
-        server = MinecraftServer.lookup(domain)
+    async def _set(self, ctx, ip):
+        """Set the IP for the server via command.
+
+        This will automatically update the config file.
+        """
+        server = MinecraftServer.lookup(ip)
         if not server:
             return await ctx.send("Could not find that server")
+
         self.server = server
-        self.bot.config["server-ip"] = domain
-        with open("config.json", "w") as config:
-            json.dump(self.bot.config, config, indent=4, sort_keys=True)
-        await ctx.send(f"Set status to {domain}")
+        self.ip = ip
+        self.bot.config["server-ip"] = ip
+        with open("config.yml", "w") as config:
+            yaml.dump(self.bot.config, config, indent=4, sort_keys=True)
 
-    @commands.Cog.listener("on_connect")
-    async def reload_status(self):
-        if not self.bot.is_ready():
-            return
-        partial = functools.partial(self.server.status)
-        try:
-            status = await self.bot.loop.run_in_executor(None, partial)
+        await self.update_status()
 
-        except:
-            game = discord.Game("Server is offline")
-            await self.bot.change_presence(status=discord.Status.dnd, activity=game)
-            self.current_status = [discord.Status.dnd, game]
-            return
+        await ctx.send(f"Set server to `{ip}`.")
 
-        if status.players.online == status.players.max:
-            bot_status = discord.Status.idle
-        else:
-            bot_status = discord.Status.online
-        game = discord.Game(f"{status.players.online}/{status.players.max} online")
-        await self.bot.change_presence(status=bot_status, activity=game)
-        self.current_status = [bot_status, game]
+    @commands.command()
+    async def update(self, ctx):
+        """Manually update the status if it broke"""
+        await self.update_status()
+        await ctx.send("Updated status")
 
     def get_game(self, game):
         if not game:
             return None
         return game.name
 
-    @tasks.loop(seconds=15)
+    async def get_me(self):
+        if not self.bot.guilds:
+            return None
+
+        return self.bot.guilds[0].me
+
+    async def set_status(self, status, text):
+        current_status = [status, text]
+
+        me = await self.get_me()
+
+        game = discord.Game(text)
+
+        # We only want to send a request if the status is different
+        # or if the status is not set.
+        # The below returns if either of those requirements are not met.
+        if me and me.activity == game and me.status == status:
+            print(2)
+            return
+
+        await self.bot.change_presence(status=status, activity=game)
+        self.current_status = current_status
+
+        log.info(f"Set status to {status}: {text}")
+
     async def update_status(self):
         partial = functools.partial(self.server.status)
         try:
-            status = await self.bot.loop.run_in_executor(None, partial)
-        except:
-            game = discord.Game("Server is offline")
-            if self.current_status == [discord.Status.dnd, game] and self.bot_member.activity:
-                return
-            await self.bot.change_presence(status=discord.Status.dnd, activity=game)
-            self.current_status = [discord.Status.dnd, game]
+            server = await self.bot.loop.run_in_executor(None, partial)
+
+        except Exception:
+            await self.set_status(discord.Status.dnd, "Server is offline")
             return
 
-        if status.players.online == status.players.max:
-            bot_status = discord.Status.idle
+        if server.players.online == server.players.max:
+            status = discord.Status.idle
         else:
-            bot_status = discord.Status.online
-        game = discord.Game(f"{status.players.online}/{status.players.max} online")
-        if self.current_status == [bot_status, game] and self.bot_member.activity:
-            return
-        await self.bot.change_presence(status=bot_status, activity=game)
-        self.current_status = [bot_status, game]
+            status = discord.Status.online
 
-    async def get_bot_member(self):
-        if not self.bot.guilds:
-            return None
-        return self.bot.guilds[0].get_member(self.bot.user.id)
+        await self.set_status(status, f"{server.players.online}/{server.players.max} online")
 
-    @update_status.before_loop
+    @tasks.loop(seconds=60)
+    async def status_updater_task(self):
+        await self.update_status()
+
+    @status_updater_task.before_loop
     async def before_printer(self):
         await self.bot.wait_until_ready()
-        self.bot_member = await self.get_bot_member()
+        log.info("Waiting 10 seconds before initial status set")
+        await asyncio.sleep(10)
+
+    @commands.Cog.listener()
+    async def on_guild_join(self, guild):
+        if len(self.guilds) == 1:
+            log.info("Joined first guild, setting status")
+            await self.update_status()
 
 
 def setup(bot):

@@ -1,44 +1,70 @@
 import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 
-import json
+import yaml
 import logging
 
+formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+handler = logging.StreamHandler()
+handler.setFormatter(formatter)
 
-def get_prefix(client, message):
-    with open("config.json", "r") as f:
-        config = json.load(f)
-    prefixes = [config["prefix"]]
-    return commands.when_mentioned_or(*prefixes)(client, message)
+logger = logging.getLogger("discord")
+logger.setLevel(logging.INFO)
+logger.addHandler(handler)
+
+log = logging.getLogger("bot")
+log.setLevel(logging.INFO)
+log.addHandler(handler)
+
+
+initial_extensions = [
+    "cogs.status",
+]
+
+
+def get_prefix(bot, message):
+    prefixes = [bot.config["prefix"]]
+    return commands.when_mentioned_or(*prefixes)(bot, message)
+
+
+description = """
+Discord Bot that checks status for a Minecraft server and displays it in the Discord sidebar
+"""
 
 
 class ServerStatus(commands.Bot):
-
     def __init__(self):
         super().__init__(
             command_prefix=get_prefix,
-            description="Fetches and displays the status of a Minecraft server",
+            description=description,
             case_insensitive=True,
+            activity=discord.Game("Starting up..."),
+            help_command=commands.MinimalHelpCommand(),
         )
 
-        logging.basicConfig(level=logging.INFO)
+        self.log = log
 
-        self.config = self.load_config("config.json")
+        log.info("Starting bot...")
 
-        self.load_extension("cogs.meta")
-        self.load_extension("cogs.status")
-        self.load_extension("cogs.server_owners")
+        log.info("Reading config file...")
+        self.config = self.load_config("config.yml")
+
+        log.info("Loading extensions...")
+        for extension in initial_extensions:
+            self.load_extension(extension)
+
         try:
             self.load_extension("jishaku")
-        except Exception as e:
-            pass
+
+        except Exception:
+            log.info("jishaku is not installed, continuing...")
 
     def load_config(self, filename):
-        with open(filename, "r") as config:
-            return json.load(config)
+        with open(filename, "r") as f:
+            return yaml.safe_load(f)
 
     async def on_ready(self):
-        logging.info(f"Logged in as {self.user.name} - {self.user.id}")
+        log.info(f"Logged in as {self.user.name} - {self.user.id}")
 
     def run(self):
         super().run(self.config["bot-token"])
