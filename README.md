@@ -4,7 +4,7 @@
 ![Full Status Example](images/full.png)
 ![Offline Status Example](images/offline.png)
 
-A Discord bot that displays the status of a Minecraft server in the sidebar.
+A simple Discord bot that displays the status of a Minecraft server in the sidebar.
 
 **If you have any issues, join the [support server](https://www.discord.gg/wfCGTrp) on Discord.** 
 
