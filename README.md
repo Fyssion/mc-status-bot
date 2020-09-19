@@ -14,6 +14,7 @@ A simple Discord bot that displays the status of a Minecraft server in the sideb
 - Real-time Minecraft server status
 - Customizable prefix
 - Easy-to-follow setup instructions
+- Custom maintenance mode detection
 - A support server to help with setup or issues
 
 ## Commands
@@ -26,40 +27,43 @@ A simple Discord bot that displays the status of a Minecraft server in the sideb
 
 ## Status Key
 
-**Online** - Minecraft server is online and joinable
-
-**Idle** - Minecraft server is online, but full
-
+**Online** - Minecraft server is online and joinable<br>
+**Idle** - Minecraft server is online, but full<br>
 **DND** - Minecraft server is offline or closed
 
 The activity shows the current player count. Ex: 77/100 online
 
 ## Installation
 
-1. Clone the repository
-   - Press the green `Clone or download` button, and click on Download ZIP
-   - Extract the ZIP file
-2. Install requirements (listed in the Requirements section)
-   - Python is required to run the bot. [Download Python here](https://www.python.org/downloads/)
-   - Once you have python installed, you can use `py -m pip install -U -r requirements.txt` (replace `py` with `python3` on Linux and Mac)
-     - You must be in the bot's directory for this to work. Use `cd DIRECTORY_HERE` with the bot's directory. 
-   - Use the command above in cmd (or terminal on Linux and Mac).
-3. Create a config.json file in the bot's directory (with notepad or your preferred text editor), and paste this in (make sure to fill in the values):
+**If you have any issues during installation, join the [support server](https://www.discord.gg/wfCGTrp) on Discord.**
 
-   ```yml
-   bot-token: BOT_TOKEN_HERE
-   prefix: PREFIX_HERE
-   server-ip: SERVER_IP_HERE
-   ```
+1. Clone the repository (as a Git repo)
+   - You must have Git installed to install and run the bot
+     - [Download Git here](https://git-scm.com/downloads)
+   - Once you have Git installed, download the bot with a command (in CMD or a terminal):
+     - `git clone https://github.com/Fyssion/mc-status-bot.git`
+   - *If you don't download the bot as a Git repo (using the steps above), you will not be able to run the bot*
+2. Install dependancies and setup the bot
+   - Python 3.6+ is required to run the bot. Python 3.7+ is recommended. [Download Python here](https://www.python.org/downloads/)
+   - Once you have python installed, run `updater.bat` on Windows or `updater.sh` on Mac/Linux.
+     - The updater will download all the dependancies for the bot and update you to the latest version.
+    - When the updater is done updating the bot, it will initiate the setup.
+      - The `token` is the how the bot logs into Discord, which you get from a bot application.
+        - If you're unsure on how to create a bot application, [visit this website](https://discordpy.readthedocs.io/en/latest/discord.html).
+4. Run the bot
+   - On Windows, run `run.bat` and on Mac/Linux run `run.sh`
 
-   - BOT_TOKEN_HERE is the bot's token, which you get from a bot application.
-     - If you're unsure on how to create a bot application, [visit this website](https://discordpy.readthedocs.io/en/latest/discord.html).
-   - PREFIX_HERE is the bot's prefix (e.g. ! or ?)
-   - SERVER_IP_HERE is the IP of the server you want to display (e.g. mc.hypixel.net)
-4. Run bot.py
-   - It's recommended you run bot.py in a terminal (e.g. cmd).
-   - On Windows, you navigate to the folder where you have the bot, open CMD (shift right click, click `Open Powershell window here`)
-   - Type `py bot.py` to start the bot.
+### Setup details
+
+The table below describes each option in the setup config.
+If you are confused, please ask in the [support server](https://www.discord.gg/wfCGTrp).
+
+| Option                       | Description                                                                                                                                                                                                                                                                                   | Default               |
+|------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------|
+| `bot-token`                  | This is the how the bot logs into Discord, which you get from a bot application. If you're unsure on how to create a bot application, [visit this website](https://discordpy.readthedocs.io/en/latest/discord.html).                                                                          | No Default (required) |
+| `prefix`                     | The prefix for the bot. This is used at the beginning of each command.                                                                                                                                                                                                                        | ;                     |
+| `server-ip`                  | The Minecraft server IP to display the status for.                                                                                                                                                                                                                                            | No Default (required) |
+| `maintenance-mode-detection` | Whether or not to run maintenance mode detection. This essentially looks for the specified word in the server's MOTD, and if it is found it sets the status to maintenance mode (DND). Example: setting the value to `maintenance` will look for the word "maintenance" in the server's MOTD. | Disabled              |
 
 ## Requirements
 
@@ -67,3 +71,7 @@ The activity shows the current player count. Ex: 77/100 online
 - mcstatus
 - pyyaml
 - OPTIONAL: jishaku
+
+## Attributes
+
+- [Just-Some-Bots/MusicBot](https://github.com/Just-Some-Bots/MusicBot) for run and updater scripts. Copyright (c) Just-Some-Bots

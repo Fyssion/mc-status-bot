@@ -122,7 +122,6 @@ class Status(commands.Cog):
         # or if the status is not set.
         # The below returns if either of those requirements are not met.
         if me and me.activity == game and me.status == status:
-            print(2)
             return
 
         await self.bot.change_presence(status=status, activity=game)
@@ -143,6 +142,12 @@ class Status(commands.Cog):
             status = discord.Status.idle
         else:
             status = discord.Status.online
+
+        maintenance_text = self.bot.config["maintenance-mode-detection"]
+        if maintenance_text:
+            if maintenance_text.lower() in server.description.lower():
+                await self.set_status(discord.Status.dnd, "Server is in maintenance mode")
+                return
 
         await self.set_status(status, f"{server.players.online}/{server.players.max} online")
 

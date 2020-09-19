@@ -4,7 +4,7 @@ from discord.ext import commands
 import yaml
 import logging
 
-formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s")
+formatter = logging.Formatter("[%(levelname)s] %(name)s: %(message)s")
 handler = logging.StreamHandler()
 handler.setFormatter(formatter)
 
