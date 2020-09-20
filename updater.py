@@ -61,8 +61,8 @@ def update_deps():
 
 
 def get_info(question, *, default=None, optional=True):
-    default_text = f" [{default}]" if default else "[]"
-    default_text = default if optional else ""
+    default_text = f" [{default}]" if default else " []"
+    default_text = default_text if optional else ""
 
     while True:
         result = input(f"{question}{default_text}: ")
