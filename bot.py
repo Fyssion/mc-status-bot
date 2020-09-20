@@ -70,5 +70,6 @@ class ServerStatus(commands.Bot):
         super().run(self.config["bot-token"])
 
 
-bot = ServerStatus()
-bot.run()
+if __name__ == "__main__":
+    bot = ServerStatus()
+    bot.run()
