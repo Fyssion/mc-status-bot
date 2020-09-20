@@ -37,9 +37,7 @@ class Status(commands.Cog):
     def cog_unload(self):
         self.status_updater_task.cancel()
 
-    @commands.command(
-        aliases=["list", "who", "online"],
-    )
+    @commands.command(aliases=["list", "who", "online"],)
     async def players(self, ctx):
         """Get player list for the current server"""
         partial = functools.partial(self.server.query)
@@ -66,8 +64,7 @@ class Status(commands.Cog):
         await ctx.send(embed=em)
 
     @commands.group(
-        invoke_without_command=True,
-        aliases=["ip"],
+        invoke_without_command=True, aliases=["ip"],
     )
     async def server(self, ctx):
         """Get the ip of the current server"""
@@ -145,11 +142,34 @@ class Status(commands.Cog):
 
         maintenance_text = self.bot.config["maintenance-mode-detection"]
         if maintenance_text:
-            if maintenance_text.lower() in server.description.lower():
-                await self.set_status(discord.Status.dnd, "Server is in maintenance mode")
+            # somehow some people have this not as a string
+            if not isinstance(maintenance_text, str):
+                logging.warning(
+                    "maintenance-mode-detection has been set, but is not a vaild type. "
+                    f"It must be a string, but is a {type(maintenance_text)} instead."
+                )
                 return
 
-        await self.set_status(status, f"{server.players.online}/{server.players.max} online")
+            # I guess the status can be a dict?
+            if isinstance(server.description, dict):
+                description = server.description.get("text", "")
+                extras = server.description.get("extra")
+                if extras:
+                    for extra in extras:
+                        description += extra.get("text", "")
+
+            else:
+                description = str(server.description)
+
+            if maintenance_text.lower() in description.lower():
+                await self.set_status(
+                    discord.Status.dnd, "Server is in maintenance mode"
+                )
+                return
+
+        await self.set_status(
+            status, f"{server.players.online}/{server.players.max} online"
+        )
 
     @tasks.loop(seconds=60)
     async def status_updater_task(self):
