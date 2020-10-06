@@ -7,6 +7,7 @@ import functools
 import logging
 import yaml
 import traceback
+import datetime
 
 
 log = logging.getLogger("bot")
@@ -15,12 +16,18 @@ log = logging.getLogger("bot")
 class ServerNotFound(commands.CommandError):
     def __init__(self, ip):
         self.ip = ip
+
         super().__init__(f"Could not find server with an IP of {ip}.")
 
 
 class Status(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
+
+        self.activity = None
+        self.status = None
+
+        self.last_set = None
 
         self.ip = ip = self.bot.config["server-ip"]
         log.info(f"Looking up Minecraft server IP: {ip}")
@@ -37,7 +44,9 @@ class Status(commands.Cog):
     def cog_unload(self):
         self.status_updater_task.cancel()
 
-    @commands.command(aliases=["list", "who", "online"],)
+    @commands.command(
+        aliases=["list", "who", "online"],
+    )
     async def players(self, ctx):
         """Get player list for the current server"""
         partial = functools.partial(self.server.query)
@@ -55,7 +64,7 @@ class Status(commands.Cog):
 
         players = "\n".join(query.players.names)
         em = discord.Embed(
-            title=f"Current Players Online:",
+            title="Current Players Online:",
             description=players,
             color=discord.Color.green(),
         )
@@ -64,7 +73,8 @@ class Status(commands.Cog):
         await ctx.send(embed=em)
 
     @commands.group(
-        invoke_without_command=True, aliases=["ip"],
+        invoke_without_command=True,
+        aliases=["ip"],
     )
     async def server(self, ctx):
         """Get the ip of the current server"""
@@ -94,46 +104,38 @@ class Status(commands.Cog):
     @commands.command()
     async def update(self, ctx):
         """Manually update the status if it broke"""
-        await self.update_status()
+        await self.update_status(force=True)
         await ctx.send("Updated status")
 
-    def get_game(self, game):
-        if not game:
-            return None
-        return game.name
-
-    async def get_me(self):
-        if not self.bot.guilds:
-            return None
-
-        return self.bot.guilds[0].me
-
-    async def set_status(self, status, text):
-        current_status = [status, text]
-
-        me = await self.get_me()
-
+    async def set_status(self, status, text, *, force=False):
         game = discord.Game(text)
 
         # We only want to send a request if the status is different
         # or if the status is not set.
         # The below returns if either of those requirements are not met.
-        if me and me.activity == game and me.status == status:
+        now = datetime.datetime.utcnow()
+        if (
+            not force
+            and self.last_set
+            and self.last_set + datetime.timedelta(minutes=30) < now
+            and self.activity == game
+            and self.status == status
+        ):
             return
 
         await self.bot.change_presence(status=status, activity=game)
-        self.current_status = current_status
+        self.status = status
+        self.activity = game
 
         log.info(f"Set status to {status}: {text}")
 
-    async def update_status(self):
+    async def get_status(self):
         partial = functools.partial(self.server.status)
         try:
             server = await self.bot.loop.run_in_executor(None, partial)
 
         except Exception:
-            await self.set_status(discord.Status.dnd, "Server is offline")
-            return
+            return discord.Status.dnd, "Server is offline"
 
         if server.players.online == server.players.max:
             status = discord.Status.idle
@@ -148,7 +150,7 @@ class Status(commands.Cog):
                     "maintenance-mode-detection has been set, but is not a vaild type. "
                     f"It must be a string, but is a {type(maintenance_text)} instead."
                 )
-                return
+                return None
 
             # I guess the status can be a dict?
             if isinstance(server.description, dict):
@@ -162,14 +164,14 @@ class Status(commands.Cog):
                 description = str(server.description)
 
             if maintenance_text.lower() in description.lower():
-                await self.set_status(
-                    discord.Status.dnd, "Server is in maintenance mode"
-                )
-                return
+                return discord.Status.dnd, "Server is in maintenence mode"
 
-        await self.set_status(
-            status, f"{server.players.online}/{server.players.max} online"
-        )
+        return status, f"{server.players.online}/{server.players.max} online"
+
+    async def update_status(self, *, force=False):
+        status, text = await self.get_status()
+
+        await self.set_status(status, text, force=force)
 
     @tasks.loop(seconds=60)
     async def status_updater_task(self):
@@ -178,7 +180,7 @@ class Status(commands.Cog):
     @status_updater_task.before_loop
     async def before_printer(self):
         await self.bot.wait_until_ready()
-        log.info("Waiting 10 seconds before initial status set")
+        log.info("Waiting 10 seconds before next status set")
         await asyncio.sleep(10)
 
     @commands.Cog.listener()

@@ -30,7 +30,6 @@ THE SOFTWARE.
 import os
 import subprocess
 import sys
-import yaml
 
 
 def y_n(q):
@@ -78,6 +77,13 @@ def get_info(question, *, default=None, optional=True):
 
 
 def run_setup():
+    try:
+        import yaml
+
+    except ImportError:
+        print("PyYAML is not installed. Please run the updater again select install dependencies or install PyYAML manually.")
+        return
+
     # option: (description, optional/default)
     options = {
         "bot-token": ("Enter the token for the bot", False),

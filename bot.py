@@ -53,6 +53,15 @@ class ServerStatus(commands.Bot):
         for extension in initial_extensions:
             self.load_extension(extension)
 
+        log.info("Setting initial status")
+        status_cog = self.get_cog("Status")
+        status, text = self.loop.run_until_complete(status_cog.get_status())
+        game = discord.Game(text)
+        status_cog.activity = game
+
+        self._connection._status = status
+        self.activity = game
+
         try:
             self.load_extension("jishaku")
 
