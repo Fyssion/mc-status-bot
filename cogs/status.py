@@ -8,6 +8,9 @@ import logging
 import yaml
 import traceback
 import datetime
+import io
+import re
+import base64
 
 
 log = logging.getLogger("bot")
@@ -51,7 +54,8 @@ class Status(commands.Cog):
         """Get player list for the current server"""
         partial = functools.partial(self.server.query)
         try:
-            query = await self.bot.loop.run_in_executor(None, partial)
+            async with ctx.typing():
+                query = await self.bot.loop.run_in_executor(None, partial)
 
         except Exception as exc:
             traceback.print_exception(type(exc), exc, exc.__traceback__)
@@ -72,22 +76,80 @@ class Status(commands.Cog):
         em.set_footer(text=f"Server IP: `{self.ip}`")
         await ctx.send(embed=em)
 
+    def resolve_favicon(self, status):
+        if status.favicon:
+            string = ",".join(status.favicon.split(",")[1:])
+            bytes = io.BytesIO(base64.b64decode(string))
+            bytes.seek(0)
+
+            return discord.File(bytes, "favicon.png")
+
+        return None
+
     @commands.group(
         invoke_without_command=True,
         aliases=["ip"],
     )
     async def server(self, ctx):
-        """Get the ip of the current server"""
-        await ctx.send(f"IP: **`{self.ip}`**")
+        """Get info about the current server"""
+        partial = functools.partial(self.server.status)
+        try:
+            async with ctx.typing():
+                status = await self.bot.loop.run_in_executor(None, partial)
+
+        except Exception:
+            status = None
+            color = discord.Color.red()
+            status_text = "Offline"
+
+        else:
+
+            players = f"{status.players.online}/{status.players.max}"
+
+            if status.players.online == status.players.max:
+                color = discord.Color.orange()
+                status_text = f"Full - {players}"
+            else:
+                color = discord.Color.green()
+                status_text = f"Online - {players}"
+
+        if status:
+            motd = self._parse_motd(status)
+            if len(motd) > 1024:
+                motd = motd[:1024] + "..."
+
+        else:
+            motd = ""
+
+        em = discord.Embed(title="Minecraft Server Info", description=motd, color=color)
+        em.add_field(name="IP", value=f"`{self.ip}`")
+        em.add_field(name="Status", value=status_text)
+
+        file = None
+
+        if status:
+            em.add_field(name="Version", value=status.version.name)
+            em.add_field(name="Latency", value=status.latency)
+
+            favicon = self.resolve_favicon(status)
+            if favicon:
+                em.set_thumbnail(url="attachment://favicon.png")
+                file = favicon
+
+        await ctx.send(embed=em, file=file)
 
     @server.command(name="set")
     @commands.is_owner()
-    async def _set(self, ctx, ip):
+    async def server_set(self, ctx, ip):
         """Set the IP for the server via command.
 
         This will automatically update the config file.
         """
-        server = MinecraftServer.lookup(ip)
+        partial = functools.partial(MinecraftServer.lookup, ip)
+
+        async with ctx.typing():
+            server = await self.bot.loop.run_in_executor(None, partial)
+
         if not server:
             return await ctx.send("Could not find that server")
 
@@ -130,6 +192,21 @@ class Status(commands.Cog):
 
         log.info(f"Set status to {status}: {text}")
 
+    def _parse_motd(self, server):
+        if isinstance(server.description, dict):
+            description = server.description.get("text", "")
+            extras = server.description.get("extra")
+            if extras:
+                for extra in extras:
+                    description += extra.get("text", "")
+
+        else:
+            description = str(server.description)
+
+        description = re.sub(r"§.", "", description)
+
+        return description
+
     async def get_status(self):
         partial = functools.partial(self.server.status)
         try:
@@ -154,15 +231,7 @@ class Status(commands.Cog):
                 return None
 
             # I guess the status can be a dict?
-            if isinstance(server.description, dict):
-                description = server.description.get("text", "")
-                extras = server.description.get("extra")
-                if extras:
-                    for extra in extras:
-                        description += extra.get("text", "")
-
-            else:
-                description = str(server.description)
+            description = self._parse_motd(server)
 
             if maintenance_text.lower() in description.lower():
                 return discord.Status.dnd, "Server is in maintenence mode"
