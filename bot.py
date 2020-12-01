@@ -4,7 +4,9 @@ from discord.ext import commands
 import yaml
 import logging
 
-formatter = logging.Formatter("[%(levelname)s] %(name)s: %(message)s")
+discord.VoiceClient.warn_nacl = False  # don't need this warning
+
+formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(name)s: %(message)s", "%Y-%m-%d %H:%M:%S")
 handler = logging.StreamHandler()
 handler.setFormatter(formatter)
 
@@ -46,14 +48,14 @@ class ServerStatus(commands.Bot):
 
         log.info("Starting bot...")
 
-        log.info("Reading config file...")
+        log.info("Loading config file...")
         self.config = self.load_config("config.yml")
 
         log.info("Loading extensions...")
         for extension in initial_extensions:
             self.load_extension(extension)
 
-        log.info("Setting initial status")
+        log.info("Setting initial status before logging in...")
         status_cog = self.get_cog("Status")
         status, text = self.loop.run_until_complete(status_cog.get_status())
         game = discord.Game(text)
@@ -61,6 +63,9 @@ class ServerStatus(commands.Bot):
 
         self._connection._status = status
         self.activity = game
+
+        self.init_ok = None
+        self.restart_signal = None
 
         try:
             self.load_extension("jishaku")
@@ -72,10 +77,22 @@ class ServerStatus(commands.Bot):
         with open(filename, "r") as f:
             return yaml.safe_load(f)
 
+    async def on_command(self, ctx):
+        destination = None
+
+        if ctx.guild is None:
+            destination = "Private Message"
+        else:
+            destination = f"#{ctx.channel} ({ctx.guild})"
+
+        log.info(f"{ctx.author} in {destination}: {ctx.message.content}")
+
     async def on_ready(self):
         log.info(f"Logged in as {self.user.name} - {self.user.id}")
+        self.init_ok = True
 
     def run(self):
+        log.info("Logging into Discord...")
         super().run(self.config["bot-token"])
 
 

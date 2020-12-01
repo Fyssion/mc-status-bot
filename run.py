@@ -172,7 +172,7 @@ def sanity_checks(optional=True):
     # Make sure we're on Python 3.5+
     req_ensure_py3()
 
-    # Fix windows encoding fuckery
+    # Fix windows encoding
     req_ensure_encoding()
 
     # Make sure we're in a writeable env
@@ -298,13 +298,13 @@ def req_ensure_env():
     ):
         log.critical(
             b64decode(
-                "Qm90IHdhc24ndCBpbnN0YWxsZWQgdXNpbmcgR2l0LiBSZWluc3RhbGwgdXNpbmcgaHR0cDovL2JpdC5seS9tdXNpY2JvdGRvY3Mu"
+                "Qm90IHdhc24ndCBpbnN0YWxsZWQgdXNpbmcgR2l0LiBSZWluc3RhbGwgdXNpbmcgaHR0cHM6Ly9naXRodWIuY29tL0Z5c3Npb24vbWMtc3RhdHVzLWJvdCNpbnN0YWxsYXRpb24="
             ).decode("utf-8")
         )
         bugger_off()
 
     try:
-        assert os.path.isfile("config.yml"), "config.yml file not found, run updater.py to run setup"
+        assert os.path.isfile("config.yml"), "config.yml file not found, run the updater to initiate setup"
         assert os.path.isfile(
             "bot.py"
         ), "Could not find bot.py"
@@ -371,7 +371,7 @@ def main():
         # Maybe I need to try to import stuff first, then actually import stuff
         # It'd save me a lot of pain with all that awful exception type checking
 
-        m = None
+        bot = None
         try:
             from bot import ServerStatus
 
@@ -418,12 +418,13 @@ def main():
             import discord
             if isinstance(e, discord.LoginFailure):
                 log.exception("There was an error logging into Discord. Please ensure that your token is correct.")
+                break
 
             else:
                 log.exception("Error starting bot")
 
         finally:
-            if not m or not m.init_ok:
+            if not bot or not bot.init_ok:
                 if any(sys.exc_info()):
                     # How to log this without redundant messages...
                     traceback.print_exc()
@@ -431,6 +432,9 @@ def main():
 
             asyncio.set_event_loop(asyncio.new_event_loop())
             loops += 1
+
+        if not bot or not bot.restart_signal:
+            break
 
         sleeptime = min(loops * 2, max_wait_time)
         if sleeptime:
