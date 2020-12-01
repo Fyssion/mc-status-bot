@@ -36,12 +36,15 @@ Discord Bot that checks status for a Minecraft server and displays it in the Dis
 
 class ServerStatus(commands.Bot):
     def __init__(self):
+        intents = discord.Intents(messages=True, guilds=True, reactions=True)
+
         super().__init__(
             command_prefix=get_prefix,
             description=description,
             case_insensitive=True,
             activity=discord.Game("Starting up..."),
             help_command=commands.MinimalHelpCommand(),
+            intents=intents,
         )
 
         self.log = log
