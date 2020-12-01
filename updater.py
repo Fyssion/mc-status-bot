@@ -76,98 +76,194 @@ def get_info(question, *, default=None, optional=True):
     return result
 
 
-def run_setup():
-    try:
-        import yaml
+class ConfigOption:
+    def __init__(self, name, help, *, default=None, optional=True):
+        self.name = name
+        self.help = help
 
-    except ImportError:
-        print("PyYAML is not installed. Please run the updater again select install dependencies or install PyYAML manually.")
+        if default and not optional:
+            raise ValueError("this option is optional yet a default has been set")
+
+        self.default = default
+        self.optional = optional
+
+    def prompt(self):
+        result = get_info(self.help, default=self.default, optional=self.optional)
+        return result
+
+
+class BotToken(ConfigOption):
+    def __init__(self):
+        super().__init__("bot-token", "Enter the token for the bot", optional=False)
+
+    def prompt(self):
+        description = self.help + (
+            ".\nYou can get the bot's token from the bot application. "
+            "To learn how to create a bot application, visit https://discordpy.readthedocs.io/en/latest/discord.html"
+        )
+        result = get_info(description, default=self.default, optional=self.optional)
+        return result
+
+
+class Prefix(ConfigOption):
+    def __init__(self):
+        super().__init__("prefix", "Enter the prefix for the bot", default=";")
+
+
+class ServerIP(ConfigOption):
+    def __init__(self):
+        super().__init__(
+            "server-ip",
+            "Enter the Minecraft server ip to display status for",
+            optional=False,
+        )
+
+
+class MaintenceModeDetection(ConfigOption):
+    def __init__(self):
+        super().__init__(
+            "maintenance-mode-detection",
+            "Enter the text to look for in the MOTD",
+            default=None,
+        )
+
+    def prompt(self):
+        enable = y_n(
+            "Would you like to enable maintenance mode detection? "
+            "This will allow you to specify a substring to search for in the Minecraft server's MOTD. "
+            "If the substring is found, the bot's status is set to maintenance mode "
+            "(DND presence with a maintenance mode message)."
+        )
+
+        if not enable:
+            return None
+
+        result = get_info(self.help, optional=False)
+        return result
+
+
+OPTIONS = (BotToken(), Prefix(), ServerIP(), MaintenceModeDetection())
+
+
+def get_option(key):
+    for option in OPTIONS:
+        if option.name == key:
+            return option
+    return None
+
+
+def ensure_config_keys(config):
+    import yaml
+
+    all_keys = [o.name for o in OPTIONS]
+
+    missing_opts = set(all_keys) - set(config.keys())
+
+    if missing_opts:
+        joined = ", ".join(missing_opts)
+        print(f"There are missing options in your config file: {joined}")
+        set_to_default = y_n(
+            "Automatically set these options to default? You can come back and change these later."
+        )
+
+        if set_to_default:
+            for opt in missing_opts:
+                option = get_option(opt)
+                config[opt] = option.default
+
+        else:
+            for opt in missing_opts:
+                option = get_option(opt)
+                result = option.prompt()
+                config[opt] = result
+
+        with open("config.yml", "w") as f:
+            yaml.dump(config, f)
+
+        print("Successfully updated config")
+
+    else:
+        print("Config is up-to-date")
+
+
+def run_config_adjustments(all_keys, formatted):
+    import yaml
+
+    with open("config.yml", "r") as f:
+        current_config = yaml.safe_load(f)
+
+    ensure_config_keys(current_config)
+
+    change = y_n("Change info in config file?")
+
+    view_more = "View more about each option here: https://github.com/Fyssion/mc-status-bot#setup-details"
+
+    if not change:
         return
 
-    # option: (description, optional/default)
-    options = {
-        "bot-token": ("Enter the token for the bot", False),
-        "prefix": ("Enter the prefix for the bot", ";"),
-        "server-ip": ("Enter the minecraft server ip to display status for", False),
-        "maintenance-mode-detection": (
-            "If you want maintenance mode detection, enter the text to look for in the MOTD or press enter to disable it",
-            None,
-        ),
-    }
-    formatted = ", ".join(options.keys())
+    while True:
+        while True:
+            to_change = get_info(
+                f"Options: {formatted}\n{view_more}\nEnter option to change",
+                optional=False,
+            )
+            to_change = to_change.lower()
+
+            if to_change in all_keys:
+                break
+
+        option = get_option(to_change)
+        change_to = option.prompt()
+        current_config[to_change] = change_to
+
+        again = y_n("Change another option?")
+        if not again:
+            break
+
+    with open("config.yml", "w") as f:
+        yaml.dump(current_config, f)
+
+    print("Successfully updated your config")
+
+
+def run_setup():
+    loops = 0
+
+    while loops < 2:
+        try:
+            import yaml
+
+            break
+
+        except ImportError:
+            print("Oh no! PyYAML is not installed. Trying to fix...")
+            loops += 1
+            update_deps()
+
+            if loops >= 2:
+                raise OSError("Could not install PyYAML. Try installing it manually.")
+
+    all_keys = [o.name for o in OPTIONS]
+    formatted = ", ".join(all_keys)
 
     config_exists = os.path.isfile("config.yml")
 
     if config_exists:
-        with open("config.yml", "r") as f:
-            current_config = yaml.safe_load(f)
+        run_config_adjustments(all_keys, formatted)
 
-        missing_opts = set(options.keys()) - set(current_config.keys())
+    else:
+        print("Config file not found, initiating setup...")
 
-        if missing_opts:
-            joined = ", ".join(missing_opts)
-            print(f"There are missing options in your config file: {joined}")
-            set_to_default = y_n("Automatically set these options to default?")
+        config = {}
 
-            if set_to_default:
-                for opt in missing_opts:
-                    desc, default = options[opt]
-                    current_config[opt] = default
+        for option in OPTIONS:
+            result = option.prompt()
+            config[option.name] = result
 
-            else:
-                for opt in missing_opts:
-                    desc, default = options[opt]
-                    optional = False if default is False else True
-                    result = get_info(desc, default=default, optional=optional)
+        with open("config.yml", "w") as f:
+            yaml.dump(config, f)
 
-                    current_config[opt] = result
-
-            with open("config.yml", "w") as f:
-                yaml.dump(current_config, f)
-
-        change = y_n("Change info in config file?")
-
-        if change:
-            while True:
-                while True:
-                    to_change = get_info(
-                        f"Options: {formatted}\nEnter option to change", optional=False
-                    )
-                    to_change = to_change.lower()
-
-                    if to_change in options:
-                        break
-
-                change_to = get_info(f"Enter new value for {to_change}", optional=False)
-
-                current_config[to_change] = change_to
-
-                again = y_n("Change another option?")
-
-                if not again:
-                    break
-
-            with open("config.yml", "w") as f:
-                yaml.dump(current_config, f)
-
-            print("Changed options.")
-
-        return
-
-    print("Config file not found, initiating setup...")
-
-    config = {}
-
-    for option, (desc, default) in options.items():
-        optional = False if default is False else True
-        result = get_info(desc, default=default, optional=optional)
-
-        config[option] = result
-
-    with open("config.yml", "w") as f:
-        yaml.dump(config, f)
-
-    print("Setup complete.")
+        print("Successfully created and setup config")
 
 
 def main():
@@ -210,6 +306,7 @@ def main():
                 update_deps()
 
             run_setup()
+            print("Done. You may now run the bot.")
             return
 
     print("Checking if we need to update the bot...")
