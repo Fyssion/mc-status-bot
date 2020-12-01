@@ -102,6 +102,7 @@ class Status(commands.Cog):
         await ctx.send(f"Set server to `{ip}`.")
 
     @commands.command()
+    @commands.cooldown(1, 30, commands.BucketType.user)
     async def update(self, ctx):
         """Manually update the status if it broke"""
         await self.update_status(force=True)
