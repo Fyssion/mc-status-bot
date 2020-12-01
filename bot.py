@@ -3,6 +3,8 @@ from discord.ext import commands
 
 import yaml
 import logging
+import sys
+import traceback
 
 discord.VoiceClient.warn_nacl = False  # don't need this warning
 
@@ -89,6 +91,82 @@ class ServerStatus(commands.Bot):
             destination = f"#{ctx.channel} ({ctx.guild})"
 
         log.info(f"{ctx.author} in {destination}: {ctx.message.content}")
+
+    async def send_unexpected_error(self, ctx, error):
+        em = discord.Embed(
+            title=":warning: Unexpected Error",
+            color=discord.Color.gold(),
+        )
+
+        description = (
+            "An unexpected error has occured:"
+            f"```py\n{error}```\n"
+            "If you think this is a bug, report it in my [support server.](https://www.discord.gg/wfCGTrp)"
+        )
+
+        em.description = description
+        await ctx.send(embed=em)
+
+    async def on_command_error(self, ctx, error):
+        red_tick = "\N{CROSS MARK}"
+
+        if hasattr(ctx, "handled"):
+            return
+
+        if isinstance(error, commands.NoPrivateMessage):
+            message = await ctx.send(
+                f"{red_tick} This command can't be used in DMs."
+            )
+
+        elif isinstance(error, commands.ArgumentParsingError):
+            message = await ctx.send(f"{red_tick} {error}")
+
+        elif isinstance(error, commands.CommandOnCooldown):
+            message = await ctx.send(
+                f"{red_tick} You are on cooldown. Try again in {int(error.retry_after)} seconds."
+            )
+
+        elif isinstance(error, commands.errors.BotMissingPermissions):
+            perms = ""
+
+            for perm in error.missing_perms:
+                formatted = (
+                    str(perm).replace("_", " ").replace("guild", "server").capitalize()
+                )
+                perms += f"\n- `{formatted}`"
+
+            message = await ctx.send(
+                f"{red_tick} I am missing some required permission(s):{perms}"
+            )
+
+        elif isinstance(error, commands.errors.BadArgument):
+            message = await ctx.send(f"{red_tick} {error}")
+
+        elif isinstance(error, commands.errors.MissingRequiredArgument):
+            message = await ctx.send(
+                f"{red_tick} Missing a required argument: `{error.param.name}`"
+            )
+
+        elif (
+            isinstance(error, commands.CommandInvokeError)
+            and str(ctx.command) == "help"
+        ):
+            pass
+
+        elif isinstance(error, commands.CommandInvokeError):
+            original = error.original
+            # if True: # for debugging
+            if not isinstance(original, discord.HTTPException):
+                print(
+                    "Ignoring exception in command {}:".format(ctx.command),
+                    file=sys.stderr,
+                )
+                traceback.print_exception(
+                    type(error), error, error.__traceback__, file=sys.stderr
+                )
+
+                await self.send_unexpected_error(ctx, error)
+                return
 
     async def on_ready(self):
         log.info(f"Logged in as {self.user.name} - {self.user.id}")
