@@ -119,6 +119,32 @@ class ServerIP(ConfigOption):
         )
 
 
+class RefreshRate(ConfigOption):
+    def __init__(self):
+        super().__init__(
+            "refresh-rate",
+            "Enter the amount of seconds to wait in between status refreshes",
+            default=60,
+        )
+
+    def prompt(self):
+        while True:
+            result = get_info(self.help, default=self.default, optional=self.optional)
+
+            try:
+                result = int(result)
+
+            except ValueError:
+                continue
+
+            if result >= 30:
+                break
+
+            print("Seconds must be 30 or higher. This is due to Discord's ratelimit on changing statuses.")
+
+        return result
+
+
 class MaintenceModeDetection(ConfigOption):
     def __init__(self):
         super().__init__(
@@ -142,7 +168,7 @@ class MaintenceModeDetection(ConfigOption):
         return result
 
 
-OPTIONS = (BotToken(), Prefix(), ServerIP(), MaintenceModeDetection())
+OPTIONS = (BotToken(), Prefix(), ServerIP(), RefreshRate(), MaintenceModeDetection())
 
 
 def get_option(key):

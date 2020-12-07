@@ -42,6 +42,7 @@ class Status(commands.Cog):
 
         log.info(f"Found server with an IP of {ip}")
 
+        self.status_updater_task.change_interval(seconds=bot.config["refresh-rate"])
         self.status_updater_task.start()
 
     def cog_unload(self):

@@ -21,6 +21,11 @@ log.setLevel(logging.INFO)
 log.addHandler(handler)
 
 
+class InvalidRefreshRate(Exception):
+    def __init__(self, refresh_rate):
+        super().__init__(f"Refresh rate must be 30 or higher. You have it set to {refresh_rate}.")
+
+
 initial_extensions = [
     "cogs.status",
 ]
@@ -55,6 +60,9 @@ class ServerStatus(commands.Bot):
 
         log.info("Loading config file...")
         self.config = self.load_config("config.yml")
+
+        if self.config["refresh-rate"] < 30:
+            raise InvalidRefreshRate(self.config["refresh-rate"])
 
         log.info("Loading extensions...")
         for extension in initial_extensions:
