@@ -6,8 +6,8 @@
 
 A simple Discord bot that displays the status of a Minecraft server in the sidebar.
 
-**If you have any issues, join the [support server](https://www.discord.gg/wfCGTrp) on Discord.**
-[![Discord server invite](https://discord.com/api/guilds/682053500775170120/embed.png)](https://discord.gg/wfCGTrp)
+**If you have any issues, join the [support server](https://www.discord.gg/eHxvStNJb7) on Discord.**
+[![Discord server invite](https://discord.com/api/guilds/682053500775170120/embed.png)](https://discord.gg/eHxvStNJb7)
 
 ## Features
 
@@ -38,8 +38,8 @@ The activity shows the current player count. Ex: 77/100 online
 
 ## Installation
 
-**If you have any issues during installation, join the [support server](https://www.discord.gg/wfCGTrp) on Discord.**
-[![Discord server invite](https://discord.com/api/guilds/682053500775170120/embed.png)](https://discord.gg/wfCGTrp)
+**If you have any issues during installation, join the [support server](https://www.discord.gg/eHxvStNJb7) on Discord.**
+[![Discord server invite](https://discord.com/api/guilds/682053500775170120/embed.png)](https://discord.gg/eHxvStNJb7)
 
 1. Clone the repository (as a Git repo)
    - You must have Git installed to install and run the bot
@@ -64,7 +64,7 @@ The activity shows the current player count. Ex: 77/100 online
 ### Setup details
 
 The table below describes each option in the setup config.
-If you are confused, please ask in the [support server](https://www.discord.gg/wfCGTrp).
+If you are confused, please ask in the [support server](https://www.discord.gg/eHxvStNJb7).
 
 | Option                       | Description                                                                                                                                                                                                                                                                                   | Default               |
 |------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------|
