@@ -19,12 +19,19 @@ A simple Discord bot that displays the status and player count of a Minecraft se
 ## Features
 
 - "At a glance" status display; no need to boot up Minecraft to see who's online!
-- Real-time Minecraft server status
-- Customizable prefix
-- Easy-to-follow setup instructions
-- Custom maintenance mode detection
-- A support server to help with setup or issues
+- Real-time Minecraft server status.
+- Customizable prefix.
+- Easy-to-follow setup instructions.
+- Custom maintenance mode detection.
+- A support server to help with setup or issues.
+
+## Ready to Begin?
+
+Head to the installation guide to get started:
+
+[Installation Guide]({{ "/installation" | relative_url  }}){: .btn .btn-purple }
 
 ## Attributes
 
-- [Just-Some-Bots/MusicBot](https://github.com/Just-Some-Bots/MusicBot) for run and updater scripts. Copyright (c) Just-Some-Bots
+- [Just-Some-Bots/MusicBot](https://github.com/Just-Some-Bots/MusicBot) for run and updater scripts.
+  Copyright &copy; Just-Some-Bots
