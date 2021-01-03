@@ -10,15 +10,17 @@ The following page guides you through the installation process.
 **If you have any issues during installation, join the [support server]({{ site.discord_server }}) on Discord.**
 [![Discord server invite](https://discord.com/api/guilds/682053500775170120/embed.png)](https://discord.gg/eHxvStNJb7)
 
-If you don't download the bot as a Git repository (using the steps below),
-you will get an error when running the bot.
-{: .warn }
+## Installation Process
 
 1. Clone the repository (as a Git repository).
     - You must have Git installed to install and run the bot.
         * [Download Git here.](https://git-scm.com/downloads)
     - Once you have Git installed, download the bot with a command (in CMD or a terminal):<br>
       `git clone https://github.com/Fyssion/mc-status-bot.git`
+
+   If you don't download the bot as a Git repository,
+   you will get an error when running the bot.
+   {: .warn }
 
 2. Install dependencies and setup the bot.
     - Python 3.6+ is required to run the bot. Python 3.7+ is recommended. [Download Python here.](https://www.python.org/downloads/)
