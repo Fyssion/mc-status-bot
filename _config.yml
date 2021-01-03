@@ -47,6 +47,8 @@ aux_links_new_tab: true
 
 footer_content: "Copyright &copy; 2020 Fyssion. Licenced under the <a href=\"https://github.com/Fyssion/mc-status-bot/tree/master/LICENSE\">MIT license.</a>"
 
+discord_server: https://www.discord.gg/eHxvStNJb7
+
 # color_scheme: dark
 
 # Exclude from processing.

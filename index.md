@@ -13,7 +13,7 @@ nav_exclude: true
 
 A simple Discord bot that displays the status and player count of a Minecraft server in the sidebar.
 
-**If you have any issues, join the [support server](https://www.discord.gg/eHxvStNJb7) on Discord.**
+**If you have any issues, join the [support server]({{ site.discord_server }}) on Discord.**
 [![Discord server invite](https://discord.com/api/guilds/682053500775170120/embed.png)](https://discord.gg/eHxvStNJb7)
 
 ## Features
