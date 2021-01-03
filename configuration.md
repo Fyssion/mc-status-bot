@@ -12,14 +12,14 @@ Configuring `mc-status-bot` is a breeze.
 To edit the config file, simply run the updater. On Windows that's `updater.bat`, and on MacOS/Linux that's `updater.sh`.
 Once the updater has finished updating the bot, it will ask you if you'd like to edit the config. Enter `y` and proceed.
 
-Alternativly, you can edit the config file directly with a text editor.
+Alternatively, you can edit the config file directly with a text editor.
 The config file is `config.yml`, which is located in the bot's main directory.
 
 If you do not see `config.yml`, make sure you
 have run the updater. The updater will create and initialize the config file for you.
 {: .note }
 
-Editing the config file directly may cause the bot to crash on startup. If this happens, don't panick!
+Editing the config file directly may cause the bot to crash on startup. If this happens, don't panic!
 There are restrictions on certain options. To see the restrictions, either see the [table below](#setup-details)
 or use the config helper in the updater. 
 {: .warn }
