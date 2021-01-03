@@ -25,7 +25,7 @@ description: >- # this means to ignore newlines until "baseurl:"
 baseurl: "/mc-status-bot" # the subpath of your site, e.g. /blog
 url: "https://www.fyssioncodes.com" # the base hostname & protocol for your site, e.g. http://example.com
 
-ga_tracking: G-JFKVM795DK
+gtag_id: G-JFKVM795DK
 
 defaults:
   - scope:
