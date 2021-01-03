@@ -4,7 +4,7 @@
 ![Full Status Example](images/full.png)
 ![Offline Status Example](images/offline.png)
 
-A simple Discord bot that displays the status of a Minecraft server in the sidebar.
+A simple Discord bot that displays the status and player count of a Minecraft server in the sidebar.
 
 For more info, including installation, configuration, and usage, visit the [documentation.](https://fyssioncodes.com/mc-status-bot)
 

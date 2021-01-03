@@ -37,7 +37,7 @@ def get_prefix(bot, message):
 
 
 description = """
-Discord Bot that checks status for a Minecraft server and displays it in the Discord sidebar
+A simple Discord bot that displays the status and player count of a Minecraft server in the sidebar.
 """
 
 
