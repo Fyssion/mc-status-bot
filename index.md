@@ -11,7 +11,7 @@ nav_exclude: true
 <img src="{{ "/assets/img/full.png" | relative_url  }}" alt="Full Status Example" width="200px">
 <img src="{{ "/assets/img/offline.png" | relative_url  }}" alt="Offline Status Example" width="200px">
 
-A simple Discord bot that displays the status of a Minecraft server in the sidebar.
+A simple Discord bot that displays the status and player count of a Minecraft server in the sidebar.
 
 **If you have any issues, join the [support server](https://www.discord.gg/eHxvStNJb7) on Discord.**
 [![Discord server invite](https://discord.com/api/guilds/682053500775170120/embed.png)](https://discord.gg/eHxvStNJb7)

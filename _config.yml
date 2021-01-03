@@ -21,7 +21,7 @@
 title: mc-status-bot
 email: fyssioncodes@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
-  A simple Discord bot that displays the status of a Minecraft server in the sidebar. 
+  A simple Discord bot that displays the status and player count of a Minecraft server in the sidebar. 
 baseurl: "/mc-status-bot" # the subpath of your site, e.g. /blog
 url: "https://www.fyssioncodes.com" # the base hostname & protocol for your site, e.g. http://example.com
 
@@ -45,7 +45,7 @@ aux_links:
 
 aux_links_new_tab: true
 
-footer_content: "Copyright &copy; 2020 Fyssion. Licenced under the <a href=\"https://github.com/Fyssion/mc-status-bot/tree/master/LICENSE.txt\">MIT license.</a>"
+footer_content: "Copyright &copy; 2020 Fyssion. Licenced under the <a href=\"https://github.com/Fyssion/mc-status-bot/tree/master/LICENSE\">MIT license.</a>"
 
 # color_scheme: dark
 
