@@ -23,7 +23,13 @@ email: fyssioncodes@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   A simple Discord bot that displays the status of a Minecraft server in the sidebar. 
 baseurl: "/mc-status-bot" # the subpath of your site, e.g. /blog
-url: "https://fyssioncodes.com" # the base hostname & protocol for your site, e.g. http://example.com
+url: "https://www.fyssioncodes.com" # the base hostname & protocol for your site, e.g. http://example.com
+
+defaults:
+  - scope:
+      path: "assets/img"
+    values:
+      image: true
 
 # Build settings
 # theme: just-the-docs

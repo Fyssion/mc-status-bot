@@ -26,7 +26,7 @@ The following page guides you through the installation process.
     - When the updater is done updating the bot, it will initiate the setup.
       - The `token` is the how the bot logs into Discord, which you get from a bot application.
         - If you're unsure on how to create a bot application, [read this tutorial](https://discordpy.readthedocs.io/en/latest/discord.html).
-      - Check [configuration](/configuration) for more info on the rest of the options.
+      - Check [configuration]({{ site.url }}/configuration) for more info on the rest of the options.
 
 4. Run the bot
    - On Windows, run `run.bat` and on Mac/Linux run `run.sh`

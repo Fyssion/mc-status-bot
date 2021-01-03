@@ -6,9 +6,9 @@ nav_exclude: true
 
 # mc-status-bot
 
-<img src="/assets/img/online.png" alt="Online Status Example for mc.hypixel.net" width="200px">
-<img src="/assets/img/full.png" alt="Full Status Example" width="200px">
-<img src="/assets/img/offline.png" alt="Offline Status Example" width="200px">
+<img src="{{ site.url }}/assets/img/online.png" alt="Online Status Example for mc.hypixel.net" width="200px">
+<img src="{{ site.url }}/assets/img/full.png" alt="Full Status Example" width="200px">
+<img src="{{ site.url }}/assets/img/offline.png" alt="Offline Status Example" width="200px">
 
 A simple Discord bot that displays the status of a Minecraft server in the sidebar.
 
