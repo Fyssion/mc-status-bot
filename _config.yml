@@ -22,8 +22,8 @@ title: mc-status-bot
 email: fyssioncodes@gmail.com
 description: >- # this means to ignore newlines until "baseurl:"
   A simple Discord bot that displays the status and player count of a Minecraft server in the sidebar. 
-baseurl: "/" # the subpath of your site, e.g. /blog
-url: "https://www.fyssioncodes.com/mc-status-bot" # the base hostname & protocol for your site, e.g. http://example.com
+baseurl: "/mc-status-bot" # the subpath of your site, e.g. /blog
+url: "https://www.fyssioncodes.com" # the base hostname & protocol for your site, e.g. http://example.com
 
 ga_tracking: G-JFKVM795DK
 
