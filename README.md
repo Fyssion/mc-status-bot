@@ -26,14 +26,14 @@ For detailed installation instructions, check out the [installation guide.](http
 
 `mc-status-bot` comes with a built-in configuration helper. To change configuration options, simply run the updater.
 For a more in-depth explanation on configuration, including configuration options,
-see the [configuration page.](https://fyssioncodes.com/mc-status-bot/configuration/)
+see the [configuration page.](https://www.fyssioncodes.com/mc-status-bot/configuration.html)
 
 ### Commands
 
 While the bot's main purpose is to display a Minecraft server's status in the Discord member list,
 it also comes with a few useful commands. For example, the `;server` command shows a message containing detailed
 info about the current Minecraft server.
-You can view the full command list [here.](https://fyssioncodes.com/mc-status-bot/commands/)
+You can view the full command list [here.](https://www.fyssioncodes.com/mc-status-bot/commands.html)
 
 ## Attributes
 
