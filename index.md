@@ -19,6 +19,7 @@ A simple Discord bot that displays the status and player count of a Minecraft se
 ## Features
 
 - "At a glance" status display; no need to boot up Minecraft to see who's online!
+- Support for both Java and Bedrock servers.
 - Real-time Minecraft server status.
 - Customizable prefix.
 - Easy-to-follow setup instructions.
