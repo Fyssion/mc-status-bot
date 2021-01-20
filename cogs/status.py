@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands, tasks
 
-from mcstatus import MinecraftServer
+from mcstatus import MinecraftServer, MinecraftBedrockServer
 import asyncio
 import functools
 import logging
@@ -11,6 +11,8 @@ import datetime
 import io
 import re
 import base64
+
+from bot import InvalidServerType
 
 
 log = logging.getLogger("bot")
@@ -33,8 +35,17 @@ class Status(commands.Cog):
         self.last_set = None
 
         self.ip = ip = self.bot.config["server-ip"]
+
+        server_type = bot.config["server-type"].lower()
+        if server_type == "java":
+            Server = self.ServerType = MinecraftServer
+        elif server_type == "bedrock":
+            Server = self.ServerType = MinecraftBedrockServer
+        else:
+            raise InvalidServerType(bot.config["server-type"])
+
         log.info(f"Looking up Minecraft server IP: {ip}")
-        self.server = MinecraftServer.lookup(ip)
+        self.server = Server.lookup(ip)
 
         if not self.server:
             log.critical(f"Could not find server with an IP of {ip}.")
@@ -104,10 +115,16 @@ class Status(commands.Cog):
             status_text = "Offline"
 
         else:
+            if self.ServerType is MinecraftServer:
+                players_online = status.players.online
+                players_max = status.players.max
+            elif self.ServerType is MinecraftBedrockServer:
+                players_online = status.players_online
+                players_max = status.players_max
 
-            players = f"{status.players.online}/{status.players.max}"
+            players = f"{players_online}/{players_max}"
 
-            if status.players.online == status.players.max:
+            if players_online == players_max:
                 color = discord.Color.orange()
                 status_text = f"Full - {players}"
             else:
@@ -123,19 +140,35 @@ class Status(commands.Cog):
             motd = ""
 
         em = discord.Embed(title="Minecraft Server Info", description=motd, color=color)
+
+        server_type = self.bot.config["server-type"]
+        em.add_field(name="Type", value=f"{server_type.lower().capitalize()}")
         em.add_field(name="IP", value=f"`{self.ip}`")
         em.add_field(name="Status", value=status_text)
 
         file = None
 
         if status:
-            em.add_field(name="Version", value=status.version.name)
-            em.add_field(name="Latency", value=status.latency)
+            if self.ServerType is MinecraftServer:
+                version = status.version.name
 
-            favicon = self.resolve_favicon(status)
-            if favicon:
-                em.set_thumbnail(url="attachment://favicon.png")
-                file = favicon
+                favicon = self.resolve_favicon(status)
+                if favicon:
+                    em.set_thumbnail(url="attachment://favicon.png")
+                    file = favicon
+
+            elif self.ServerType is MinecraftBedrockServer:
+                version = f"{status.version.brand}: {status.version.protocol}"
+
+                if status.gamemode:
+                    try:
+                        gamemode = ["Survival", "Creative", "Adventure", "Spectator"][int(status.gamemode)]
+                    except (ValueError, TypeError):
+                        gamemode = status.gamemode
+                    em.add_field(name="Gamemode", value=gamemode)
+
+            em.add_field(name="Version", value=version)
+            em.add_field(name="Latency", value=f"{status.latency:.2f}ms")
 
         await ctx.send(embed=em, file=file)
 
@@ -146,7 +179,7 @@ class Status(commands.Cog):
 
         This will automatically update the config file.
         """
-        partial = functools.partial(MinecraftServer.lookup, ip)
+        partial = functools.partial(self.ServerType.lookup, ip)
 
         async with ctx.typing():
             server = await self.bot.loop.run_in_executor(None, partial)
@@ -194,15 +227,20 @@ class Status(commands.Cog):
         log.info(f"Set status to {status}: {text}")
 
     def _parse_motd(self, server):
-        if isinstance(server.description, dict):
-            description = server.description.get("text", "")
-            extras = server.description.get("extra")
+        if self.ServerType is MinecraftServer:
+            motd = server.description
+        elif self.ServerType is MinecraftBedrockServer:
+            motd = server.motd
+
+        if isinstance(motd, dict):
+            description = motd.get("text", "")
+            extras = motd.get("extra")
             if extras:
                 for extra in extras:
                     description += extra.get("text", "")
 
         else:
-            description = str(server.description)
+            description = str(motd)
 
         description = re.sub(r"§.", "", description)
 
@@ -216,7 +254,14 @@ class Status(commands.Cog):
         except Exception:
             return discord.Status.dnd, "Server is offline"
 
-        if server.players.online == server.players.max:
+        if self.ServerType is MinecraftServer:
+            players_online = server.players.online
+            players_max = server.players.max
+        elif self.ServerType is MinecraftBedrockServer:
+            players_online = server.players_online
+            players_max = server.players_max
+
+        if players_online == players_max:
             status = discord.Status.idle
         else:
             status = discord.Status.online
@@ -237,7 +282,7 @@ class Status(commands.Cog):
             if maintenance_text.lower() in description.lower():
                 return discord.Status.dnd, "Server is in maintenence mode"
 
-        return status, f"{server.players.online}/{server.players.max} online"
+        return status, f"{players_online}/{players_max} online"
 
     async def update_status(self, *, force=False):
         status, text = await self.get_status()

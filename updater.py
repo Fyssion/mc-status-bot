@@ -110,6 +110,28 @@ class Prefix(ConfigOption):
         super().__init__("prefix", "Enter the prefix for the bot", default=";")
 
 
+class ServerType(ConfigOption):
+    def __init__(self):
+        super().__init__(
+            "server-type",
+            "Enter the type of Minecraft server (Java or Bedrock)",
+            default="java",
+        )
+
+    def prompt(self):
+        while True:
+            result = get_info(self.help, default=self.default, optional=self.optional)
+
+            result = result.lower()
+
+            if result in ["java", "bedrock"]:
+                break
+
+            print("Please enter either Java or Bedrock.")
+
+        return result
+
+
 class ServerIP(ConfigOption):
     def __init__(self):
         super().__init__(
@@ -168,7 +190,7 @@ class MaintenceModeDetection(ConfigOption):
         return result
 
 
-OPTIONS = (BotToken(), Prefix(), ServerIP(), RefreshRate(), MaintenceModeDetection())
+OPTIONS = (BotToken(), Prefix(), ServerType(), ServerIP(), RefreshRate(), MaintenceModeDetection())
 
 
 def get_option(key):

@@ -21,9 +21,18 @@ log.setLevel(logging.INFO)
 log.addHandler(handler)
 
 
-class InvalidRefreshRate(Exception):
+class InvalidConfigValue(Exception):
+    pass
+
+
+class InvalidRefreshRate(InvalidConfigValue):
     def __init__(self, refresh_rate):
         super().__init__(f"Refresh rate must be 30 or higher. You have it set to {refresh_rate}.")
+
+
+class InvalidServerType(InvalidConfigValue):
+    def __init__(self, server_type):
+        super().__init__(f"Server type must be either Java or Bedrock. You have it set to {server_type}.")
 
 
 initial_extensions = [
@@ -60,6 +69,10 @@ class ServerStatus(commands.Bot):
 
         log.info("Loading config file...")
         self.config = self.load_config("config.yml")
+
+        # Config checks
+        if self.config["server-type"].lower() not in ["java", "bedrock"]:
+            raise InvalidServerType(self.config["server-type"])
 
         if self.config["refresh-rate"] < 30:
             raise InvalidRefreshRate(self.config["refresh-rate"])
