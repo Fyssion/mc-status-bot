@@ -18,6 +18,7 @@ Make sure to remove `<>` and `[]` when using a command.
 
     Example: `;server set mc.hypixel.net`
 - `;players` - Get a list of all players on the Minecraft server.
+  At the moment, this only works with Java servers.
 
   If the `;players` command isn't working,
   make sure to enable `enable-query` in your Minecraft server's `server.properties`.
