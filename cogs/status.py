@@ -63,7 +63,12 @@ class Status(commands.Cog):
         aliases=["list", "who", "online"],
     )
     async def players(self, ctx):
-        """Get player list for the current server"""
+        """Get player list for the current server.
+
+        At the moment, this is is only available for Java servers."""
+        if self.ServerType is MinecraftBedrockServer:
+            return await ctx.send("Sorry, this functionality is only available for Java servers.")
+
         partial = functools.partial(self.server.query)
         try:
             async with ctx.typing():
