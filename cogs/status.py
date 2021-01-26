@@ -26,6 +26,11 @@ class ServerNotFound(commands.CommandError):
 
 
 class Status(commands.Cog):
+    """The main functionality of the bot.
+
+    This includes the status updater and all Minecraft Server
+    related commands.
+    """
     def __init__(self, bot):
         self.bot = bot
 
@@ -108,7 +113,7 @@ class Status(commands.Cog):
         aliases=["ip"],
     )
     async def server(self, ctx):
-        """Get info about the current server"""
+        """Get info about the current server."""
         partial = functools.partial(self.server.status)
         try:
             async with ctx.typing():
@@ -183,6 +188,7 @@ class Status(commands.Cog):
         """Set the IP for the server via command.
 
         This will automatically update the config file.
+        You must be thw owner of the bot to use this command.
         """
         partial = functools.partial(self.ServerType.lookup, ip)
 
@@ -205,7 +211,7 @@ class Status(commands.Cog):
     @commands.command()
     @commands.cooldown(1, 30, commands.BucketType.user)
     async def update(self, ctx):
-        """Manually update the status if it broke"""
+        """Manually update the status if it broke."""
         await self.update_status(force=True)
         await ctx.send("Updated status")
 

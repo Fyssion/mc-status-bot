@@ -37,6 +37,8 @@ class InvalidServerType(InvalidConfigValue):
 
 initial_extensions = [
     "cogs.status",
+    "cogs.admin",
+    "cogs.help",
 ]
 
 
@@ -95,6 +97,7 @@ class ServerStatus(commands.Bot):
 
         try:
             self.load_extension("jishaku")
+            self.get_command("jishaku").hidden = True
 
         except Exception:
             log.info("jishaku is not installed, continuing...")
