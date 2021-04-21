@@ -16,7 +16,8 @@ Alternatively, you can edit the config file directly with a text editor.
 The config file is `config.yml`, which is located in the bot's main directory.
 
 If you do not see `config.yml`, make sure you
-have run the updater. The updater will create and initialize the config file for you.
+have run the updater. The updater will create and initialize the config file for you.<br>
+Alternatively, you can create the `config.yml` file manually using the [example below.](#example-config)
 {: .note }
 
 Editing the config file directly may cause the bot to crash on startup. If this happens, don't panic!
@@ -37,3 +38,16 @@ If you are confused, please ask in the [support server]({{ site.discord_server }
 | `server-ip`                  | The Minecraft server IP to display the status for.                                                                                                                                                                                                                                            | No Default (required) |
 | `refresh-rate`               | The time in seconds in between status refreshes. Cannot be less than 30.                                                                                                                                                                                                                      | 60                    |
 | `maintenance-mode-detection` | Whether or not to run maintenance mode detection. This essentially looks for the specified word in the server's MOTD, and if it is found it sets the status to maintenance mode (DND). Example: setting the value to `maintenance` will look for the word "maintenance" in the server's MOTD. | Disabled              |
+
+## Example config
+
+If you want to manually create the config file, here is what it should look like:
+
+```yml
+bot-token: BOT-TOKEN-HERE
+maintenance-mode-detection: null
+prefix: ;
+refresh-rate: 60
+server-ip: mc.hypixel.net
+server-type: java
+```
