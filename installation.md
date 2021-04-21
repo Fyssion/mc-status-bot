@@ -12,17 +12,17 @@ The following page guides you through the installation process.
 
 ## Installation Process
 
-1. Clone the repository (as a Git repository).
+1. **Clone the bot's GitHub repository.**
     - You must have Git installed to install and run the bot.
         * [Download Git here.](https://git-scm.com/downloads)
-    - Once you have Git installed, download the bot with a command (in CMD or a terminal):<br>
+    - Once you have Git installed, download the bot with this command (in CMD or a terminal):<br>
       `git clone https://github.com/Fyssion/mc-status-bot.git`
 
    If you don't download the bot as a Git repository,
    you will get an error when running the bot.
    {: .warn }
 
-2. Install dependencies and setup the bot.
+2. **Install dependencies and setup the bot.**
     - Python 3.6+ is required to run the bot. Python 3.7+ is recommended. [Download Python here.](https://www.python.org/downloads/)
     - Once you have python installed, run `updater.bat` on Windows or `updater.sh` on Mac/Linux.
         * The updater will download all the dependencies for the bot and update you to the latest version.<br>
@@ -32,12 +32,12 @@ The following page guides you through the installation process.
             - If you're unsure on how to create a bot application, [read this tutorial.](https://discordpy.readthedocs.io/en/latest/discord.html).
         * Check [configuration]({{ "/configuration" | relative_url  }}) for more info on the rest of the options.
 
-4. Run the bot
+3. **Run the bot**
       - On Windows, run `run.bat` and on Mac/Linux run `run.sh`.
 
 
 You need to keep the bot running in order for it to keep displaying the status.<br>
-If you can't host the bot on your machine, I recommend renting a cheap VPS to run the bot on.
+If you can't host the bot on your own machine, I recommend renting a cheap VPS to run the bot on.
 {: .note }
 
 
