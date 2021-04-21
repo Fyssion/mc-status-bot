@@ -5,22 +5,24 @@ nav_order: 4
 
 # Contributing
 
-Want to contribute to `mc-status-bot`? Contributions are welcome!
+Want to contribute to mc-status-bot? Contributions are welcome!
+Feel free to open an issue or PR on [GitHub.](https://github.com/Fyssion/mc-status-bot/issues)
+You can also join the [Discord server]({{ site.discord_server }}) and discuss in the mc-status-bot channels.
 
 ## Discussion
 
-Want to discuss changes before opening a PR?
-Join the [Discord server]({{ site.discord_server }}) and talk to Fyssion.
+To discuss mc-status-bot design, features, or anything else, join the [Discord server]({{ site.discord_server }}).
+Make sure to grab the mc-status-bot role and talk in the appropriate channel.
 
-## Requirements
+## Bot requirements
 
-A list of requirements for the bot can be found in [`requirements.txt`](https://github.com/Fyssion/mc-status-bot/tree/master/requirements.txt).
+A list of requirements for the bot can be found in [`requirements.txt`](https://github.com/Fyssion/mc-status-bot/tree/master/requirements.txt). These requirements can be installed with the updater or with pip. For more info, see the [installation guide.]({{ "/installation" | relative_url  }})
 
-`mc-status-bot` also supports loading the [jishaku debugging cog.](https://github.com/Gorialis/jishaku)
+mc-status-bot also supports loading the [jishaku debugging cog.](https://github.com/Gorialis/jishaku)
 jishaku will be automatically loaded if it is installed.
 {: .note }
 
 ## Building Docs
 
 GitHub Pages and Jekyll are used.
-To build the docs, see the [GitHub Pages Documentation](https://docs.github.com/github/working-with-github-pages/testing-your-github-pages-site-locally-with-jekyll).
+To build the docs locally, see the [GitHub Pages Documentation](https://docs.github.com/github/working-with-github-pages/testing-your-github-pages-site-locally-with-jekyll).
