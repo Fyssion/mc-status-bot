@@ -28,7 +28,6 @@ or use the config helper in the updater.
 ## Setup details
 
 The table below describes each option in the setup config.
-If you are confused, please ask in the [support server]({{ site.discord_server }}).
 
 | Option                       | Description                                                                                                                                                                                                                                                                                   | Default               |
 |------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------|

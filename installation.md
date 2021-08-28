@@ -7,8 +7,6 @@ nav_order: 1
 
 The following page guides you through the installation process.
 
-**If you have any issues during installation, join the [support server]({{ site.discord_server }}) on Discord.**
-[![Discord server invite](https://discord.com/api/guilds/682053500775170120/embed.png)](https://discord.gg/eHxvStNJb7)
 
 ## Installation Process
 

@@ -7,11 +7,9 @@ nav_order: 4
 
 Want to contribute to mc-status-bot? Contributions are welcome!
 Feel free to open an issue or PR on [GitHub.](https://github.com/Fyssion/mc-status-bot/issues)
-You can also join the [Discord server]({{ site.discord_server }}) and discuss in the mc-status-bot channels.
 
 ## Discussion
 
-To discuss mc-status-bot design, features, or anything else, join the [Discord server]({{ site.discord_server }}).
 Make sure to grab the mc-status-bot role and talk in the appropriate channel.
 
 ## Bot requirements

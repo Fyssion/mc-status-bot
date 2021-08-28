@@ -40,14 +40,10 @@ remote_theme: pmarsceill/just-the-docs
 aux_links:
   "View on GitHub":
     - "//github.com/Fyssion/mc-status-bot"
-  "Join Support Server on Discord":
-    - "https://www.discord.gg/eHxvStNJb7"
 
 aux_links_new_tab: true
 
 footer_content: "Copyright &copy; 2020 Fyssion. Licenced under the <a href=\"https://github.com/Fyssion/mc-status-bot/tree/master/LICENSE\">MIT license.</a>"
-
-discord_server: https://www.discord.gg/eHxvStNJb7
 
 # color_scheme: dark
 
