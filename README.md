@@ -6,6 +6,10 @@
 
 A simple Discord bot that displays the status and player count of a Minecraft server in the sidebar.
 
+## Archival Note
+
+mc-status-bot is no longer being maintained. It will not recieve any bug fixes or new updates.
+
 ## Features
 
 - "At a glance" status display; no need to boot up Minecraft to see who's online!
