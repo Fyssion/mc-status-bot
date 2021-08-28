@@ -125,7 +125,6 @@ class ServerStatus(commands.Bot):
         description = (
             "An unexpected error has occured:"
             f"```py\n{error}```\n"
-            "If you think this is a bug, report it in my [support server.](https://www.discord.gg/eHxvStNJb7)"
         )
 
         em.description = description

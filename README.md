@@ -14,8 +14,6 @@ A simple Discord bot that displays the status and player count of a Minecraft se
 - Customizable prefix.
 - Easy-to-follow setup instructions.
 - Custom maintenance mode detection.
-- A [support server](https://discord.gg/eHxvStNJb7) to help with setup or issues.
-  [![Discord server invite](https://discord.com/api/guilds/682053500775170120/embed.png)](https://discord.gg/eHxvStNJb7)
 
 For more info, including installation, configuration, and usage, visit the [documentation.](https://fyssioncodes.com/mc-status-bot)
 
